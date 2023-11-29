@@ -67,22 +67,39 @@ class Artifact:
                artifact_type=None,
                artifact_set=None,
                artifact_mainstat=None,
-               artifact_substats=[]):
-    self.artifact_type = artifact_type
-    self.artifact_set = artifact_set
-    self.artifact_mainstat = artifact_mainstat
-    self.artifact_substats = artifact_substats
-    if len(artifact_substats) == 0:
+               artifact_substats=None,
+               artifact_maxlines=None,
+              ):
+    self.artifact_type = artifact_type or 'flower'
+    self.artifact_set = artifact_set or'Any'
+    self.artifact_mainstat = artifact_mainstat or 'hp'
+    
+    if isinstance(artifact_substats, list):
+      tempDict = {}
+      for item in artifact_substats:
+        tempDict.update({item: {'rollCount': 1, 'rollValue': 0}})
+      self.artifact_substats = tempDict
+    elif isinstance(artifact_substats, dict):
+      self.artifact_substats = artifact_substats
+    else:
+      self.artifact_substats = {}
+
+    if len(self.artifact_substats.keys()) == 0:
       self.artifact_lines = 3
     else:
-      self.artifact_lines = len(artifact_substats)
+      self.artifact_lines = len(self.artifact_substats.keys())
+
+    if artifact_maxlines is None:
+      self.artifact_maxlines = 4
+    else:
+      self.artifact_maxlines = artifact_maxlines
 
   def __str__(self):
-    return f"Type: '{self.artifact_type}' Main: '{self.artifact_mainstat}' Subs: {self.artifact_substats}"
+    return f"Type: '{self.artifact_type}' Main: '{self.artifact_mainstat}' Subs: {self.artifact_substats.keys()}"
 
   def Generate_Mainstat(self):
     # Randomly choose a mainstat based on the slot
-    # Todo: Add check that artifact type is valid
+    # Todo: Add check that artifact type is not None
     artifact_mainstat = choice(
         slotInfo[self.artifact_type]['mainstats'],
         p=slotInfo[self.artifact_type]['mainstat_probabilities'])
@@ -92,46 +109,61 @@ class Artifact:
     # Generate random artifact substats based on slot and mainstat
 
     # Remove mainstat from substat pool if applicable
-    mainStat = self.artifact_mainstat
     subStat_Pool = subStats.copy()
     with contextlib.suppress(ValueError):
-      subStat_Pool.remove(mainStat)
+      subStat_Pool.remove(self.artifact_mainstat)
 
     # Randomly generate substats based on sampling from substat pool without replacement
-    artifact_substats = []
+    artifact_substats = {}
     for i in range(self.artifact_lines):
       subStat_probabilities = SubStat_Probabilities(subStat_Pool)
       artifact_subStat = choice(subStat_Pool,
                                 p=list(subStat_probabilities.values()))
-      artifact_substats.append(artifact_subStat)
+      # Initialize rollCount and rollValue
+      artifact_substats[artifact_subStat] = {
+        'rollCount': 1,
+        'rollValue': 0,
+      }
+      # Remove substat from pool
       subStat_Pool.remove(artifact_subStat)
-    self.artifact_substats = artifact_substats
+
+    # Replace self.artifact_substats
+    self.artifact_substats.clear()
+    self.artifact_substats.update(artifact_substats)
 
   def Add_Substat(self):
-    # Generate random artifact substat based on slot and mainstat up to a max of 4
+    # Generate random artifact substat based on slot and mainstat up to maxlines
 
-    if len(self.artifact_substats) == 4:
+    if len(self.artifact_substats.keys()) >= self.artifact_maxlines:
       return
 
     # Remove mainstat from substat pool if applicable
-    mainStat = self.artifact_mainstat
     subStat_Pool = subStats.copy()
     with contextlib.suppress(ValueError):
-      subStat_Pool.remove(mainStat)
+      subStat_Pool.remove(self.artifact_mainstat)
 
     # Remove existing substats from the substat pool
-    artifact_substats = self.artifact_substats
-    for subStat in artifact_substats:
+    for subStat in self.artifact_substats.keys():
       with contextlib.suppress(ValueError):
         subStat_Pool.remove(subStat)
 
     # Randomly generate substat based on sampling from substat pool without replacement
+    artifact_substats = self.artifact_substats
     subStat_probabilities = SubStat_Probabilities(subStat_Pool)
     artifact_subStat = choice(subStat_Pool,
                               p=list(subStat_probabilities.values()))
-    artifact_substats.append(artifact_subStat)
-    self.artifact_substats = artifact_substats
+    # Initialize rollCount and rollValue
+    artifact_substats.update({artifact_subStat: {
+      'rollCount': 1,
+      'rollValue': 0,
+    }})
+    
+    # Remove substat from pool
+    subStat_Pool.remove(artifact_subStat)
 
+    # Update self.artifact_substats
+    self.artifact_substats.update(artifact_substats)
+    
   def random(self):
     # Generate a random artifact
 
@@ -150,7 +182,7 @@ class Artifact:
 
     # Generate artifact mainstat and substats
     self.artifact_mainstat = None
-    self.artifact_substats = []
+    self.artifact_substats.clear()
     self.Generate_Mainstat()
     self.Generate_Substats()
 
@@ -158,8 +190,19 @@ class Artifact:
     print('Set: %s' % self.artifact_set)
     print('Slot: %s' % self.artifact_type)
     print('MainStat: %s ' % self.artifact_mainstat)
-    for i in range(len(self.artifact_substats)):
+    for i in range(len(self.artifact_substats.keys())):
       print('SubStat: %s' % self.artifact_substats[i])
+
+  def get_substat_lines(self):
+    
+    return self.artifact_lines
+
+  def get_substat_list(self):
+    return self.artifact_substats.keys()
+    
+    
+
+
 
 
 # Generate Random Artifact (test)
@@ -179,7 +222,7 @@ def Artifact_Accept_Filter(artifact, filter):
   #t_isect = set(filter['types']).intersection(set([artifact.artifact_type]))
   #m_isect = set(filter['mainstats']).intersection(set([artifact.artifact_mainstat]))
   s_isect = set(filter['substats']).intersection(
-      set(artifact.artifact_substats))
+      set(artifact.get_substat_list()))
 
   if artifact.artifact_type in filter[
       'types'] and artifact.artifact_mainstat in filter['mainstats'] and len(
@@ -192,7 +235,7 @@ def Artifact_Exclude_Filter(artifact, filter):
   # Reject artifact if it meets filters
   
   s_isect = set(filter['substats']).intersection(
-      set(artifact.artifact_substats))
+      set(artifact.get_substat_list()))
 
   if artifact.artifact_type in filter[
       'types'] and artifact.artifact_mainstat in filter['mainstats'] and len(
