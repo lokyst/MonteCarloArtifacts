@@ -60,20 +60,23 @@ def SubStat_Probabilities(subStats):
   return subStat_Probabilities
 
 
+##########################################
 # Define Artifact class
+##########################################
 class Artifact:
 
-  def __init__(self,
-               artifact_type=None,
-               artifact_set=None,
-               artifact_mainstat=None,
-               artifact_substats=None,
-               artifact_maxlines=None,
-              ):
+  def __init__(
+      self,
+      artifact_type=None,
+      artifact_set=None,
+      artifact_mainstat=None,
+      artifact_substats=None,
+      artifact_maxlines=None,
+  ):
     self.artifact_type = artifact_type or 'flower'
-    self.artifact_set = artifact_set or'Any'
+    self.artifact_set = artifact_set
     self.artifact_mainstat = artifact_mainstat or 'hp'
-    
+
     if isinstance(artifact_substats, list):
       tempDict = {}
       for item in artifact_substats:
@@ -121,8 +124,8 @@ class Artifact:
                                 p=list(subStat_probabilities.values()))
       # Initialize rollCount and rollValue
       artifact_substats[artifact_subStat] = {
-        'rollCount': 1,
-        'rollValue': 0,
+          'rollCount': 1,
+          'rollValue': 0,
       }
       # Remove substat from pool
       subStat_Pool.remove(artifact_subStat)
@@ -153,17 +156,18 @@ class Artifact:
     artifact_subStat = choice(subStat_Pool,
                               p=list(subStat_probabilities.values()))
     # Initialize rollCount and rollValue
-    artifact_substats.update({artifact_subStat: {
-      'rollCount': 1,
-      'rollValue': 0,
-    }})
-    
+    artifact_substats.update(
+        {artifact_subStat: {
+            'rollCount': 1,
+            'rollValue': 0,
+        }})
+
     # Remove substat from pool
     subStat_Pool.remove(artifact_subStat)
 
     # Update self.artifact_substats
     self.artifact_substats.update(artifact_substats)
-    
+
   def random(self):
     # Generate a random artifact
 
@@ -190,27 +194,17 @@ class Artifact:
     print('Set: %s' % self.artifact_set)
     print('Slot: %s' % self.artifact_type)
     print('MainStat: %s ' % self.artifact_mainstat)
-    for i in range(len(self.artifact_substats.keys())):
-      print('SubStat: %s' % self.artifact_substats[i])
+    for i in self.artifact_substats.keys():
+      print('SubStat: %s' % i)
 
   def get_substat_lines(self):
-    
     return self.artifact_lines
 
   def get_substat_list(self):
     return self.artifact_substats.keys()
-    
-    
 
 
 
-
-# Generate Random Artifact (test)
-artifact = Artifact()
-artifact.random()
-
-#print(artifact)
-#artifact.print()
 
 
 ##########################################
@@ -231,9 +225,10 @@ def Artifact_Accept_Filter(artifact, filter):
 
   return False
 
-def Artifact_Exclude_Filter(artifact, filter):
+
+def Artifact_Reject_Filter(artifact, filter):
   # Reject artifact if it meets filters
-  
+
   s_isect = set(filter['substats']).intersection(
       set(artifact.get_substat_list()))
 
@@ -243,6 +238,7 @@ def Artifact_Exclude_Filter(artifact, filter):
     return True
 
   return False
+
 
 def Keep_Artifact(artifact, inclusion_filters, exclusion_filters):
   state = False
@@ -255,7 +251,7 @@ def Keep_Artifact(artifact, inclusion_filters, exclusion_filters):
     if exclusion_filters[j]['f'](artifact, exclusion_filters[j]['p']):
       state = False
       break
- 
+
   return state
 
 
@@ -363,46 +359,55 @@ filters_4[6]['p']['substat_matches'] = 2
 
 # Rejection filters
 filters_exclude = [
-  {
-      # 0. Reject any artifact with two flat stats
-      'f': Artifact_Accept_Filter,
-      'p': {
-          'types': ['flower', 'feather', 'sands', 'goblet', 'circlet'],
-          'mainstats': [
-              'hp', 'atk', 'def', 'hpp', 'atkp', 'defp', 'er', 'em', 'cr',
-              'cd', 'dmgp', 'hb'
-          ],
-          'substats': ['hp', 'def', 'atk'],
-          'starting_substat_lines': 3,
-          'substat_matches': 2,
-      }
-  },
+    {
+        # 0. Reject any artifact with two flat stats
+        'f': Artifact_Reject_Filter,
+        'p': {
+            'types': ['flower', 'feather', 'sands', 'goblet', 'circlet'],
+            'mainstats': [
+                'hp', 'atk', 'def', 'hpp', 'atkp', 'defp', 'er', 'em', 'cr',
+                'cd', 'dmgp', 'hb'
+            ],
+            'substats': ['hp', 'def', 'atk'],
+            'starting_substat_lines':
+            3,
+            'substat_matches':
+            2,
+        }
+    },
 ]
-  
+
 #desiredStats = ['atkp', 'er', 'cr', 'cd']
 #filters_exclude = []
 nSuccess_0 = 0
 nSuccess_4 = 0
-trials = 1000
+trials = 1
+
+# Generate Random Artifact (test)
+artifact = Artifact()
+#artifact.random()
+
+#print(artifact)
+#artifact.print()
 
 for i in range(trials):
   artifact.random()
   #artifact.artifact_type = 'circlet'
   #artifact.artifact_mainstat = 'cr'
   #artifact.artifact_substats = ['hp', 'defp', 'hpp']
-  #artifact.print()
+  #print(artifact)
+  artifact.print()
 
   if Keep_Artifact(artifact, filters_0, filters_exclude):
-      nSuccess_0 += 1
-      #print('Filter %d Accepted' % j)
+    nSuccess_0 += 1
+    print('Accepted')
 
-
-  artifact.Add_Substat()
-  #artifact.print()
-  if Keep_Artifact(artifact, filters_4, filters_exclude):
+    artifact.Add_Substat()
+    artifact.print()
+    if Keep_Artifact(artifact, filters_4, filters_exclude):
       nSuccess_4 += 1
-      #print('Filter %d Accepted' % j)
-
+      print('Accepted')
+  
   #print(draw, isect, success)
 
 print('0: %s %s' % (nSuccess_0, nSuccess_0 / trials))
