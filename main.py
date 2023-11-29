@@ -196,6 +196,7 @@ class Artifact:
     print('MainStat: %s ' % self.artifact_mainstat)
     for i in self.artifact_substats.keys():
       print('SubStat: %s' % i)
+    print('')
 
   def get_substat_lines(self):
     return self.artifact_lines
@@ -204,17 +205,12 @@ class Artifact:
     return self.artifact_substats.keys()
 
 
-
-
-
 ##########################################
 # Evaluate generated Artifacts against a filter and see how many meet criteria
 ##########################################
 def Artifact_Accept_Filter(artifact, filter):
-  # Accept artifact if it meets any filters
+  # Returns True if artifact matches filter
 
-  #t_isect = set(filter['types']).intersection(set([artifact.artifact_type]))
-  #m_isect = set(filter['mainstats']).intersection(set([artifact.artifact_mainstat]))
   s_isect = set(filter['substats']).intersection(
       set(artifact.get_substat_list()))
 
@@ -227,7 +223,7 @@ def Artifact_Accept_Filter(artifact, filter):
 
 
 def Artifact_Reject_Filter(artifact, filter):
-  # Reject artifact if it meets filters
+  # Returns True if artifact matches filter
 
   s_isect = set(filter['substats']).intersection(
       set(artifact.get_substat_list()))
@@ -240,21 +236,35 @@ def Artifact_Reject_Filter(artifact, filter):
   return False
 
 
-def Keep_Artifact(artifact, inclusion_filters, exclusion_filters):
+def Keep_Artifact(artifact, inclusion_filters, exclusion_filters, debug=False):
+  # Returns True if artifact matches any inclusion filter, and does not match any exclusion filter
+  # Rejection filters will override inclusion
+
   state = False
   for i in range(len(inclusion_filters)):
     if inclusion_filters[i]['f'](artifact, inclusion_filters[i]['p']):
       state = True
+      if debug:
+        print('Accepted: Rule %i' % i)
       break
 
+  if not state and debug:
+    print('Rejected: No matches')
+
+  # Exclusion will always override
   for j in range(len(exclusion_filters)):
     if exclusion_filters[j]['f'](artifact, exclusion_filters[j]['p']):
       state = False
+      if debug:
+        print('Rejected: Rule %i' % j)
       break
 
   return state
 
 
+##########################################
+# Filter Sets
+##########################################
 # Filters at +0
 filters_0 = [
     {
@@ -267,10 +277,8 @@ filters_0 = [
                 'cd', 'dmgp', 'hb'
             ],
             'substats': ['cr', 'cd'],
-            'starting_substat_lines':
-            3,
-            'substat_matches':
-            2,
+            'starting_substat_lines': 3,
+            'substat_matches':2,
         }
     },
     {
@@ -329,21 +337,20 @@ filters_0 = [
         },
     },
     {
-        # 6. Keep any flower or feather with atk and at least two of these stats
+        # 6. Keep any flower or feather with at least one crit stat
         'f': Artifact_Accept_Filter,
         'p': {
             'types': ['flower', 'feather'],
             'mainstats': ['hp', 'atk'],
-            'substats': ['cr', 'cd', 'er', 'em', 'atkp'],
+            'substats': ['cr', 'cd'],
             'starting_substat_lines': 3,
-            'substat_matches': 2,
+            'substat_matches': 1,
         },
     },
 ]
 
-# Filters at +4
+# Tighten Filters at +4
 filters_4 = copy.deepcopy(filters_0)
-
 # 3. Keep any sands with atkp or er and at least 1 crit stat
 filters_4[3]['p']['substats'] = ['cr', 'cd']
 filters_4[3]['p']['substat_matches'] = 1
@@ -353,9 +360,11 @@ filters_4[4]['p']['substat_matches'] = 1
 # 5. Keep any sand, circlet or goblet with hpp, defp, atkp and CR && CD
 filters_4[6]['p']['substats'] = ['cr', 'cd']
 filters_4[5]['p']['substat_matches'] = 2
-# 6. Keep any flower or feather with atk and at least two of these stats
+# 6. Keep any flower or feather with atk and CR && CD
 filters_4[6]['p']['substats'] = ['cr', 'cd']
 filters_4[6]['p']['substat_matches'] = 2
+
+filters_4[6]['p']['substat_matches'] = 3
 
 # Rejection filters
 filters_exclude = [
@@ -369,46 +378,35 @@ filters_exclude = [
                 'cd', 'dmgp', 'hb'
             ],
             'substats': ['hp', 'def', 'atk'],
-            'starting_substat_lines':
-            3,
-            'substat_matches':
-            2,
+            'starting_substat_lines': 3,
+            'substat_matches': 2,
         }
     },
 ]
 
-#desiredStats = ['atkp', 'er', 'cr', 'cd']
-#filters_exclude = []
+##########################################
+# Simulation
+##########################################
 nSuccess_0 = 0
 nSuccess_4 = 0
-trials = 1
+trials = 1000
 
-# Generate Random Artifact (test)
+# Generate Random Artifact
 artifact = Artifact()
-#artifact.random()
-
-#print(artifact)
-#artifact.print()
 
 for i in range(trials):
   artifact.random()
-  #artifact.artifact_type = 'circlet'
-  #artifact.artifact_mainstat = 'cr'
-  #artifact.artifact_substats = ['hp', 'defp', 'hpp']
+  #artifact = Artifact('feather', None, 'atk', ['hp', 'cr', 'hpp'])
   #print(artifact)
-  artifact.print()
+  #artifact.print()
 
   if Keep_Artifact(artifact, filters_0, filters_exclude):
     nSuccess_0 += 1
-    print('Accepted')
 
     artifact.Add_Substat()
-    artifact.print()
+    #artifact.print()
     if Keep_Artifact(artifact, filters_4, filters_exclude):
       nSuccess_4 += 1
-      print('Accepted')
-  
-  #print(draw, isect, success)
 
 print('0: %s %s' % (nSuccess_0, nSuccess_0 / trials))
 print('4: %s %s' % (nSuccess_4, nSuccess_4 / trials))
