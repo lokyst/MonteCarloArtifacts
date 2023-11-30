@@ -97,8 +97,12 @@ class Artifact:
     else:
       self.artifact_maxlines = artifact_maxlines
 
+    self.artifact_level = 0 # TODO
+    self.artifact_level_max = 20 # TODO
+    self.artifact_substat_level_increment = 4 # TODO
+
   def __str__(self):
-    return f"Type: '{self.artifact_type}' Main: '{self.artifact_mainstat}' Subs: {self.artifact_substats.keys()}"
+    return f"Type: '{self.artifact_type}' Main: '{self.artifact_mainstat}' Lvl : '{self.artifact_level}' Subs: {self.artifact_substats}"
 
   def Generate_Mainstat(self):
     # Randomly choose a mainstat based on the slot
@@ -168,6 +172,38 @@ class Artifact:
     # Update self.artifact_substats
     self.artifact_substats.update(artifact_substats)
 
+  def Increment_Substat(self, n_increments=1):
+    # Increment a random artifact substat 
+
+    for _ in range(n_increments):
+        # Randomly select existing substat based on uniform distribution
+        substat_Pool = list(self.artifact_substats.keys())
+        artifact_subStat = choice(substat_Pool)
+        # Increment rollCount and rollValue
+        self.artifact_substats[artifact_subStat]['rollCount'] += 1
+        self.artifact_substats[artifact_subStat]['rollValue'] += 0
+       
+  def Level_Artifact(self, increment):
+    # Level artifact by increment up to artifact_level_max
+
+    # Return if already at max level
+    if self.artifact_level >= self.artifact_level_max:
+        return
+
+    # Record start and end states because we need to count how many substat increments occurred
+    start_level = self.artifact_level
+    final_level = start_level + increment
+
+    substat_increments = final_level//4 - start_level//4
+
+    for _ in range(substat_increments):
+        if len(self.artifact_substats.keys()) < self.artifact_maxlines:
+            self.Add_Substat()
+        else:
+            self.Increment_Substat()
+
+    self.artifact_level = min(final_level, self.artifact_level_max)
+
   def random(self):
     # Generate a random artifact
 
@@ -194,8 +230,9 @@ class Artifact:
     print('Set: %s' % self.artifact_set)
     print('Slot: %s' % self.artifact_type)
     print('MainStat: %s ' % self.artifact_mainstat)
+    print('Level: %s' % self.artifact_level)
     for i in self.artifact_substats.keys():
-      print('SubStat: %s' % i)
+      print('SubStat: %s cnt: %s' % (i, self.artifact_substats[i]['rollCount']))
     print('')
 
   def get_substat_lines(self):
@@ -221,7 +258,6 @@ def Artifact_Accept_Filter(artifact, filter):
 
   return False
 
-
 def Artifact_Reject_Filter(artifact, filter):
   # Returns True if artifact matches filter
 
@@ -234,7 +270,6 @@ def Artifact_Reject_Filter(artifact, filter):
     return True
 
   return False
-
 
 def Keep_Artifact(artifact, inclusion_filters, exclusion_filters, debug=False):
   # Returns True if artifact matches any inclusion filter, and does not match any exclusion filter
@@ -389,7 +424,7 @@ filters_exclude = [
 ##########################################
 nSuccess_0 = 0
 nSuccess_4 = 0
-trials = 1000
+trials = 1
 
 # Generate Random Artifact
 artifact = Artifact()
@@ -403,8 +438,8 @@ for i in range(trials):
   if Keep_Artifact(artifact, filters_0, filters_exclude):
     nSuccess_0 += 1
 
-    artifact.Add_Substat()
-    #artifact.print()
+    artifact.Level_Artifact(4)
+    artifact.print()
     if Keep_Artifact(artifact, filters_4, filters_exclude):
       nSuccess_4 += 1
 
