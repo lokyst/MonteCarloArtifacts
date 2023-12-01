@@ -271,6 +271,20 @@ def Artifact_Reject_Filter(artifact, filter):
 
   return False
 
+def Artifact_Rollcount_Filter(artifact, filter):
+  # Returns True if total roll count for specified stats meets or exceeds minimum
+
+  rcnt = 0
+
+  for s in filter['substats']:
+    with contextlib.suppress(KeyError):
+      rcnt += artifact.artifact_substats[s]['rollCount']  
+
+  if artifact.artifact_type in filter['types'] and artifact.artifact_mainstat in filter['mainstats'] and rcnt >= filter['min_roll_count']:
+    return True
+
+  return False
+
 def Keep_Artifact(artifact, inclusion_filters, exclusion_filters, debug=False):
   # Returns True if artifact matches any inclusion filter, and does not match any exclusion filter
   # Rejection filters will override inclusion
@@ -395,11 +409,16 @@ filters_4[4]['p']['substat_matches'] = 1
 # 5. Keep any sand, circlet or goblet with hpp, defp, atkp and CR && CD
 filters_4[6]['p']['substats'] = ['cr', 'cd']
 filters_4[5]['p']['substat_matches'] = 2
-# 6. Keep any flower or feather with atk and CR && CD
+# 6. Keep any flower or feather with CR && CD
 filters_4[6]['p']['substats'] = ['cr', 'cd']
 filters_4[6]['p']['substat_matches'] = 2
 
-filters_4[6]['p']['substat_matches'] = 3
+# Rollcount filters
+filters_12 = copy.deepcopy(filters_0)
+for filter in filters_12:
+  filter.update({'f': Artifact_Rollcount_Filter})
+  filter['p'].update({'substats': ['atkp', 'er', 'em', 'cr', 'cd']})
+  filter['p'].update({'min_roll_count': 3})
 
 # Rejection filters
 filters_exclude = [
@@ -424,7 +443,8 @@ filters_exclude = [
 ##########################################
 nSuccess_0 = 0
 nSuccess_4 = 0
-trials = 1
+nSuccess_12 = 0
+trials = 1000
 
 # Generate Random Artifact
 artifact = Artifact()
@@ -439,9 +459,15 @@ for i in range(trials):
     nSuccess_0 += 1
 
     artifact.Level_Artifact(4)
-    artifact.print()
+    #artifact.print()
     if Keep_Artifact(artifact, filters_4, filters_exclude):
       nSuccess_4 += 1
 
+      artifact.Level_Artifact(8)
+      #artifact.print()
+      if Keep_Artifact(artifact, filters_12, []):
+        nSuccess_12 +=1
+  
 print('0: %s %s' % (nSuccess_0, nSuccess_0 / trials))
 print('4: %s %s' % (nSuccess_4, nSuccess_4 / trials))
+print('12: %s %s' % (nSuccess_12, nSuccess_12 / trials))
