@@ -321,6 +321,39 @@ def Keep_Artifact(artifact, inclusion_filters, exclusion_filters, debug=False):
 ##########################################
 # Filter Sets
 ##########################################
+# Inspired by this post
+'''
+Personally, I think the strategy should be divided into 3 groups:
+Flower/Plume
+For these pieces, it’s okay to be have higher expectations since their main stats are 
+guaranteed.
+Sand/Goblet
+These can have lower expectations since it’s already difficult to get the main stats 
+that we want.
+Circlet
+This is where expectations should be the lowest.
+I also stopped counting crit value and go with roll value instead.
+How I calculate roll value:
+If it starts with 3 substats, assign 0/8. If it starts with 4 substats, assign 0/9.
+Then I calculate how many substats at +0 rolled into stats that I want. E.g. I want crit
+rate, crit dmg, atk% and ER. The artifact has crit rate, ER, and HP%. This would be 2/8 
+roll value.
+If 1/8, level it up to +4.
+Trash every 0/8, 1/8, 0/9, and 1/9 plume/flower at this stage. For sand/goblet/circlet, 
+I’ll keep it if the main stats matches.
+Then I’ll compare it with my existing piece.
+If I don’t have existing piece, level it up all the way to +20. If I have existing 
+piece, I’ll judge how likely the new piece will have higher roll value compared to the 
+existing piece. E.g. if I have a +20 2/8 and +4 2/8, I’ll level the +4 all the way to 
++20. Worst case scenario I’ll have a second piece with the same roll value. Then 
+whichever has lesser number can be a fodder.
+This way I can upgrade my char little by little. From 2/8 to 3/8, 4/8, then 5/8.
+Most of the time, I stop at 3/8 for circlet, 4/8 for sand/goblet, and 5/8 for 
+flower/plume. They’re good enough to clear spiral abyss.
+
+From <https://www.reddit.com/r/GenshinImpactTips/comments/xwbvrb/guide_to_choose_which_artifact_keep_and_level_up/> 
+'''
+
 # Filters at +0
 filters_0 = [
     {
@@ -333,7 +366,6 @@ filters_0 = [
                 'cd', 'dmgp', 'hb'
             ],
             'substats': ['cr', 'cd'],
-            'starting_substat_lines': 3,
             'substat_matches': 2,
         }
     },
@@ -344,7 +376,6 @@ filters_0 = [
             'types': ['circlet', 'sands', 'goblet'],
             'mainstats': ['em'],
             'substats': [],
-            'starting_substat_lines': 3,
             'substat_matches': 0,
         },
     },
@@ -355,7 +386,6 @@ filters_0 = [
             'types': ['circlet'],
             'mainstats': ['cr', 'cd'],
             'substats': [],
-            'starting_substat_lines': 3,
             'substat_matches': 0,
         }
     },
@@ -366,7 +396,6 @@ filters_0 = [
             'types': ['sands'],
             'mainstats': ['atkp', 'er'],
             'substats': ['cr', 'cd', 'er', 'em', 'atkp'],
-            'starting_substat_lines': 3,
             'substat_matches': 0,
         },
     },
@@ -377,7 +406,6 @@ filters_0 = [
             'types': ['goblet'],
             'mainstats': ['dmgp'],
             'substats': ['cr', 'cd', 'er', 'em', 'atkp'],
-            'starting_substat_lines': 3,
             'substat_matches': 0,
         },
     },
@@ -388,7 +416,6 @@ filters_0 = [
             'types': ['sands', 'goblet', 'circlet'],
             'mainstats': ['hpp', 'defp', 'atkp'],
             'substats': ['cr', 'cd'],
-            'starting_substat_lines': 3,
             'substat_matches': 1,
         },
     },
@@ -399,7 +426,6 @@ filters_0 = [
             'types': ['flower', 'feather'],
             'mainstats': ['hp', 'atk'],
             'substats': ['cr', 'cd'],
-            'starting_substat_lines': 3,
             'substat_matches': 1,
         },
     },
