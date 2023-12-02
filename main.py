@@ -433,8 +433,10 @@ filters_0 = [
 
 # Tighten Filters at +4
 filters_4 = copy.deepcopy(filters_0)
-# 3. Keep any sands with atkp or er and at least 1 crit stat
-filters_4[3]['p']['substats'] = ['cr', 'cd']
+# 0. No change. Let's see if we get lucky at +8
+# 1. No change. EM is a rare mainstat and chars built around EM do not care about other stats
+# 2. No change. CR and CD are rare substats.
+# 3. Keep any sands with atkp or er and at least 1 desireable stat
 filters_4[3]['p']['substat_matches'] = 1
 # 4. Keep any goblet with dmgp and at least 1 crit stat
 filters_4[4]['p']['substats'] = ['cr', 'cd']
