@@ -434,8 +434,8 @@ filters_0 = [
 # Tighten Filters at +4
 filters_4 = copy.deepcopy(filters_0)
 # 0. No change. Let's see if we get lucky at +8
-# 1. No change. EM is a rare mainstat and chars built around EM do not care about other stats
-# 2. No change. CR and CD are rare substats.
+# 1. No change. EM is a rare mainstat and chars built around EM often do not care about other stats
+# 2. No change. CR and CD are rare main stats.
 # 3. Keep any sands with atkp or er and at least 1 desireable stat
 filters_4[3]['p']['substat_matches'] = 1
 # 4. Keep any goblet with dmgp and at least 1 crit stat
@@ -481,6 +481,16 @@ nSuccess_4 = 0
 nSuccess_12 = 0
 trials = 1000
 
+artifact_exp_consumed = 0
+artifact_exp_gained = 0
+
+lvl_4_exp_consumed = 16300
+lvl_12_exp_consumed = 87150
+lvl_20_exp_consumed = 270475
+lvl_0_exp_gained = 3780
+lvl_4_exp_gained = lvl_0_exp_gained + lvl_4_exp_consumed * 0.8
+lvl_12_exp_gained = lvl_0_exp_gained + lvl_12_exp_consumed * 0.8
+
 # Generate Random Artifact
 artifact = Artifact()
 
@@ -495,14 +505,41 @@ for i in range(trials):
 
         artifact.Level_Artifact(4)
         #artifact.print()
+        artifact_exp_consumed += lvl_4_exp_consumed
+
         if Keep_Artifact(artifact, filters_4, filters_exclude):
             nSuccess_4 += 1
 
             artifact.Level_Artifact(8)
             #artifact.print()
+            artifact_exp_consumed += lvl_12_exp_consumed - lvl_4_exp_consumed
+            
             if Keep_Artifact(artifact, filters_12, []):
                 nSuccess_12 += 1
+
+                artifact.Level_Artifact(8)
+                artifact_exp_consumed += lvl_20_exp_consumed - lvl_12_exp_consumed - lvl_4_exp_consumed
+            
+            else:
+                artifact_exp_gained += lvl_12_exp_gained
+
+        else:
+            artifact_exp_gained += lvl_4_exp_gained
+
+    else:
+        artifact_exp_gained += lvl_0_exp_gained
 
 print('0: %s %s' % (nSuccess_0, nSuccess_0 / trials))
 print('4: %s %s' % (nSuccess_4, nSuccess_4 / trials))
 print('12: %s %s' % (nSuccess_12, nSuccess_12 / trials))
+print('Artifact Exp Used: %i' % artifact_exp_consumed)
+print('Artifact Exp Gained (5stars only): %i' % artifact_exp_gained)
+
+non_5star_exp_per_run = 10722.6
+n_5stars_per_run =1.07
+n_runs = trials/n_5stars_per_run
+non_5star_exp_gained = n_runs * non_5star_exp_per_run
+print('Non 5 Star Exp Gained: %i' % non_5star_exp_gained)
+print('Total Exp Gained: %i' % (non_5star_exp_gained + artifact_exp_gained))
+exp_surplus = non_5star_exp_gained + artifact_exp_gained - artifact_exp_consumed
+print('Exp Surplus: %i' % exp_surplus)
