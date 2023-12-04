@@ -473,6 +473,8 @@ filters_exclude = [
     },
 ]
 
+#filters_exclude = []
+
 ##########################################
 # Simulation
 ##########################################
@@ -536,10 +538,11 @@ print('Artifact Exp Used: %i' % artifact_exp_consumed)
 print('Artifact Exp Gained (5stars only): %i' % artifact_exp_gained)
 
 non_5star_exp_per_run = 10722.6
-n_5stars_per_run =1.07
+n_5stars_per_run = 1.07
 n_runs = trials/n_5stars_per_run
 non_5star_exp_gained = n_runs * non_5star_exp_per_run
 print('Non 5 Star Exp Gained: %i' % non_5star_exp_gained)
 print('Total Exp Gained: %i' % (non_5star_exp_gained + artifact_exp_gained))
 exp_surplus = non_5star_exp_gained + artifact_exp_gained - artifact_exp_consumed
 print('Exp Surplus: %i' % exp_surplus)
+print('Exp lost from foddering Lvl_0: %i' % ((trials-nSuccess_0)*lvl_0_exp_gained))
