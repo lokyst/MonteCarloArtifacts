@@ -169,11 +169,11 @@ class Artifact:
 
         self.artifact_level = min(final_level, self.artifact_max_level)
 
-    def random(self):
+    def random(self, slotpool=None):
         # Generate a random artifact
 
         # Randomly choose a slot assuming equal probabilities for all slots
-        slot_Pool = slotType.copy()
+        slot_Pool = slotpool or slotType.copy()
         slot_Probabilities = [1 / len(slot_Pool)] * len(slot_Pool)
         artifact_Slot = choice(slot_Pool, p=slot_Probabilities)
         self.artifact_type = artifact_Slot
@@ -456,7 +456,7 @@ lvl_4_exp_gained = lvl_0_exp_gained + sum(artifact_exp_by_level[:4]) * 0.8
 lvl_12_exp_gained = lvl_0_exp_gained + sum(artifact_exp_by_level[:12]) * 0.8
 
 # Generate Random Artifact
-artifact = Artifact()
+artifact = Artifact(artifact_max_level=g.artifact_max_level, artifact_substat_level_increment=g.artifact_substat_level_increment)
 
 for i in range(trials):
     artifact.random()

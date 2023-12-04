@@ -5,12 +5,12 @@ slotInfo = {
     'flower': {
         'type': 'flower',
         'mainstats': ['hp'],
-        'mainstat_probabilities': [1],
+        'mainstat_probabilities': [1.0],
     },
     'feather': {
         'type': 'feather',
         'mainstats': ['atk'],
-        'mainstat_probabilities': [1],
+        'mainstat_probabilities': [1.0],
     },
     'sands': {
         'type': 'sands',
@@ -30,7 +30,6 @@ slotInfo = {
 }
 
 # Substat info
-subStats = ['hp', 'atk', 'def', 'hpp', 'atkp', 'defp', 'er', 'em', 'cr', 'cd']
 subStat_Weights = {
     'hp': 6,
     'atk': 6,
@@ -80,3 +79,20 @@ base_exp_gain = {
 
 artifact_max_level = 20
 artifact_substat_level_increment = 4
+
+def SubStat_Probabilities(subStats):
+    subStat_Probabilities = {}
+    for subStat in subStats:
+        sumOfWeights = 0
+        for subStat2 in subStats:
+            sumOfWeights += subStat_Weights[subStat2]
+        subStat_Probabilities[subStat] = subStat_Weights[subStat] / sumOfWeights
+    return subStat_Probabilities
+
+for key in slotInfo:
+    print(key, sum(slotInfo[key]['mainstat_probabilities']))
+
+subStat_Probabilities = SubStat_Probabilities(subStat_Weights)
+for key in subStat_Probabilities:
+    print('%4s %.4f' % (key, subStat_Probabilities[key]))
+
