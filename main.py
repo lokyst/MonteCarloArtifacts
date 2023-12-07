@@ -1,7 +1,7 @@
 from numpy.random import choice
 import contextlib
-import copy
 import genshin as g
+import Filter as f
 
 # Get list of equip slot names
 slotType = g.slotType
@@ -208,236 +208,10 @@ class Artifact:
         return self.artifact_substats.keys()
 
 
-##########################################
-# Evaluate generated Artifacts against a filter and see how many meet criteria
-##########################################
-def Artifact_Accept_Filter(artifact, filter):
-    # Returns True if artifact matches filter
-
-    s_isect = set(filter['substats']).intersection(
-        set(artifact.get_substat_list()))
-
-    if artifact.artifact_type in filter[
-            'types'] and artifact.artifact_mainstat in filter[
-                'mainstats'] and len(s_isect) >= filter['substat_matches']:
-        return True
-
-    return False
 
 
-def Artifact_Reject_Filter(artifact, filter):
-    # Returns True if artifact matches filter
-
-    s_isect = set(filter['substats']).intersection(
-        set(artifact.get_substat_list()))
-
-    if artifact.artifact_type in filter[
-            'types'] and artifact.artifact_mainstat in filter[
-                'mainstats'] and len(s_isect) >= filter['substat_matches']:
-        return True
-
-    return False
 
 
-def Artifact_Rollcount_Filter(artifact, filter):
-    # Returns True if total roll count for specified stats meets or exceeds minimum
-
-    rcnt = 0
-
-    for s in filter['substats']:
-        with contextlib.suppress(KeyError):
-            rcnt += artifact.artifact_substats[s]['rollCount']
-
-    if artifact.artifact_type in filter[
-            'types'] and artifact.artifact_mainstat in filter[
-                'mainstats'] and rcnt >= filter['min_roll_count']:
-        return True
-
-    return False
-
-
-def Keep_Artifact(artifact, inclusion_filters, exclusion_filters, debug=False):
-    # Returns True if artifact matches any inclusion filter, and does not match any exclusion filter
-    # Rejection filters will override inclusion
-
-    state = False
-    for i in range(len(inclusion_filters)):
-        if inclusion_filters[i]['f'](artifact, inclusion_filters[i]['p']):
-            state = True
-            if debug:
-                print('Accepted: Rule %i' % i)
-            break
-
-    if not state and debug:
-        print('Rejected: No matches')
-
-    # Exclusion will always override
-    for j in range(len(exclusion_filters)):
-        if exclusion_filters[j]['f'](artifact, exclusion_filters[j]['p']):
-            state = False
-            if debug:
-                print('Rejected: Rule %i' % j)
-            break
-
-    return state
-
-
-##########################################
-# Filter Sets
-##########################################
-# Inspired by this post
-'''
-Personally, I think the strategy should be divided into 3 groups:
-Flower/Plume
-For these pieces, it’s okay to be have higher expectations since their main stats are 
-guaranteed.
-Sand/Goblet
-These can have lower expectations since it’s already difficult to get the main stats 
-that we want.
-Circlet
-This is where expectations should be the lowest.
-I also stopped counting crit value and go with roll value instead.
-How I calculate roll value:
-If it starts with 3 substats, assign 0/8. If it starts with 4 substats, assign 0/9.
-Then I calculate how many substats at +0 rolled into stats that I want. E.g. I want crit
-rate, crit dmg, atk% and ER. The artifact has crit rate, ER, and HP%. This would be 2/8 
-roll value.
-If 1/8, level it up to +4.
-Trash every 0/8, 1/8, 0/9, and 1/9 plume/flower at this stage. For sand/goblet/circlet, 
-I’ll keep it if the main stats matches.
-Then I’ll compare it with my existing piece.
-If I don’t have existing piece, level it up all the way to +20. If I have existing 
-piece, I’ll judge how likely the new piece will have higher roll value compared to the 
-existing piece. E.g. if I have a +20 2/8 and +4 2/8, I’ll level the +4 all the way to 
-+20. Worst case scenario I’ll have a second piece with the same roll value. Then 
-whichever has lesser number can be a fodder.
-This way I can upgrade my char little by little. From 2/8 to 3/8, 4/8, then 5/8.
-Most of the time, I stop at 3/8 for circlet, 4/8 for sand/goblet, and 5/8 for 
-flower/plume. They’re good enough to clear spiral abyss.
-
-From <https://www.reddit.com/r/GenshinImpactTips/comments/xwbvrb/guide_to_choose_which_artifact_keep_and_level_up/> 
-'''
-
-# Filters at +0
-filters_0 = [
-    {
-        # 0. Keep any artifact with CR && CD
-        'f': Artifact_Accept_Filter,
-        'p': {
-            'types': ['flower', 'feather', 'sands', 'goblet', 'circlet'],
-            'mainstats': [
-                'hp', 'atk', 'def', 'hpp', 'atkp', 'defp', 'er', 'em', 'cr',
-                'cd', 'dmgp', 'hb'
-            ],
-            'substats': ['cr', 'cd'],
-            'substat_matches': 2,
-        }
-    },
-    {
-        # 1. Keep any circlet, sands, or goblet with mainstat em
-        'f': Artifact_Accept_Filter,
-        'p': {
-            'types': ['circlet', 'sands', 'goblet'],
-            'mainstats': ['em'],
-            'substats': [],
-            'substat_matches': 0,
-        },
-    },
-    {
-        # 2. Keep any circlet with mainstat of either CR || CD
-        'f': Artifact_Accept_Filter,
-        'p': {
-            'types': ['circlet'],
-            'mainstats': ['cr', 'cd'],
-            'substats': [],
-            'substat_matches': 0,
-        }
-    },
-    {
-        # 3. Keep any sands with atkp or er
-        'f': Artifact_Accept_Filter,
-        'p': {
-            'types': ['sands'],
-            'mainstats': ['atkp', 'er'],
-            'substats': ['cr', 'cd', 'er', 'em', 'atkp'],
-            'substat_matches': 0,
-        },
-    },
-    {
-        # 4. Keep any goblet with dmgp
-        'f': Artifact_Accept_Filter,
-        'p': {
-            'types': ['goblet'],
-            'mainstats': ['dmgp'],
-            'substats': ['cr', 'cd', 'er', 'em', 'atkp'],
-            'substat_matches': 0,
-        },
-    },
-    {
-        # 5. Keep any sand, circlet or goblet with hpp, defp, atkp and at least one crit stat
-        'f': Artifact_Accept_Filter,
-        'p': {
-            'types': ['sands', 'goblet', 'circlet'],
-            'mainstats': ['hpp', 'defp', 'atkp'],
-            'substats': ['cr', 'cd'],
-            'substat_matches': 1,
-        },
-    },
-    {
-        # 6. Keep any flower or feather with at least one crit stat
-        'f': Artifact_Accept_Filter,
-        'p': {
-            'types': ['flower', 'feather'],
-            'mainstats': ['hp', 'atk'],
-            'substats': ['cr', 'cd'],
-            'substat_matches': 1,
-        },
-    },
-]
-
-# Tighten Filters at +4
-filters_4 = copy.deepcopy(filters_0)
-# 0. No change. Let's see if we get lucky at +8
-# 1. No change. EM is a rare mainstat and chars built around EM often do not care about other stats
-# 2. No change. CR and CD are rare main stats.
-# 3. Keep any sands with atkp or er and at least 1 desireable stat
-filters_4[3]['p']['substat_matches'] = 1
-# 4. Keep any goblet with dmgp and at least 1 crit stat
-filters_4[4]['p']['substats'] = ['cr', 'cd']
-filters_4[4]['p']['substat_matches'] = 1
-# 5. Keep any sand, circlet or goblet with hpp, defp, atkp and CR && CD
-filters_4[6]['p']['substats'] = ['cr', 'cd']
-filters_4[5]['p']['substat_matches'] = 2
-# 6. Keep any flower or feather with CR && CD
-filters_4[6]['p']['substats'] = ['cr', 'cd']
-filters_4[6]['p']['substat_matches'] = 2
-
-# Rollcount filters
-filters_12 = copy.deepcopy(filters_0)
-for filter in filters_12:
-    filter.update({'f': Artifact_Rollcount_Filter})
-    filter['p'].update({'substats': ['atkp', 'er', 'em', 'cr', 'cd']})
-    filter['p'].update({'min_roll_count': 3})
-
-# Rejection filters
-filters_exclude = [
-    {
-        # 0. Reject any artifact with two flat stats
-        'f': Artifact_Reject_Filter,
-        'p': {
-            'types': ['flower', 'feather', 'sands', 'goblet', 'circlet'],
-            'mainstats': [
-                'hp', 'atk', 'def', 'hpp', 'atkp', 'defp', 'er', 'em', 'cr',
-                'cd', 'dmgp', 'hb'
-            ],
-            'substats': ['hp', 'def', 'atk'],
-            'starting_substat_lines': 3,
-            'substat_matches': 2,
-        }
-    },
-]
-
-#filters_exclude = []
 
 ##########################################
 # Simulation
@@ -466,7 +240,7 @@ for i in range(trials):
     lvl_start = 0
     lvl_end = 0
 
-    if Keep_Artifact(artifact, filters_0, filters_exclude):
+    if f.Keep_Artifact(artifact, g.filters_0, g.filters_exclude):
         nSuccess_0 += 1
 
         # +4
@@ -476,7 +250,7 @@ for i in range(trials):
         artifact_exp_consumed += sum(artifact_exp_by_level[lvl_start:lvl_end])
         lvl_start = lvl_end
 
-        if Keep_Artifact(artifact, filters_4, filters_exclude):
+        if f.Keep_Artifact(artifact, g.filters_4, g.filters_exclude):
             nSuccess_4 += 1
 
             # +8
@@ -492,7 +266,7 @@ for i in range(trials):
             artifact_exp_consumed += sum(artifact_exp_by_level[lvl_start:lvl_end])
             lvl_start = lvl_end
 
-            if Keep_Artifact(artifact, filters_12, []):
+            if f.Keep_Artifact(artifact, g.filters_12, []):
                 nSuccess_12 += 1
 
                 # +16
