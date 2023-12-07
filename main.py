@@ -1,4 +1,5 @@
 from numpy.random import choice
+import copy
 import contextlib
 import genshin as g
 import filter as f
@@ -12,16 +13,6 @@ subStats = list(g.subStat_Weights.keys())
 # Get dict of substat weights
 subStat_Weights = g.subStat_Weights
 
-# Substats are weighted without replacement
-def SubStat_Probabilities(subStats):
-    subStat_Probabilities = {}
-    for subStat in subStats:
-        sumOfWeights = 0
-        for subStat2 in subStats:
-            sumOfWeights += subStat_Weights[subStat2]
-        subStat_Probabilities[
-            subStat] = subStat_Weights[subStat] / sumOfWeights
-    return subStat_Probabilities
 
 
 ##########################################
@@ -84,22 +75,8 @@ class Artifact:
             subStat_Pool.remove(self.artifact_mainstat)
 
         # Randomly generate substats based on sampling from substat pool without replacement
-        artifact_substats = {}
         for i in range(self.artifact_lines):
-            subStat_probabilities = SubStat_Probabilities(subStat_Pool)
-            artifact_subStat = choice(subStat_Pool,
-                                      p=list(subStat_probabilities.values()))
-            # Initialize rollCount and rollValue
-            artifact_substats[artifact_subStat] = {
-                'rollCount': 1,
-                'rollValue': 0,
-            }
-            # Remove substat from pool
-            subStat_Pool.remove(artifact_subStat)
-
-        # Replace self.artifact_substats
-        self.artifact_substats.clear()
-        self.artifact_substats.update(artifact_substats)
+            self.Add_Substat()
 
     def Add_Substat(self):
         # Generate random artifact substat based on slot and mainstat up to maxlines
@@ -108,19 +85,19 @@ class Artifact:
             return
 
         # Remove mainstat from substat pool if applicable
-        subStat_Pool = subStats.copy()
-        with contextlib.suppress(ValueError):
-            subStat_Pool.remove(self.artifact_mainstat)
+        subStat_Pool = copy.deepcopy(subStat_Weights)
+        with contextlib.suppress(KeyError):
+            subStat_Pool.pop(self.artifact_mainstat)
 
         # Remove existing substats from the substat pool
         for subStat in self.artifact_substats.keys():
-            with contextlib.suppress(ValueError):
-                subStat_Pool.remove(subStat)
+            with contextlib.suppress(KeyError):
+                subStat_Pool.pop(subStat)
 
         # Randomly generate substat based on sampling from substat pool without replacement
         artifact_substats = self.artifact_substats
-        subStat_probabilities = SubStat_Probabilities(subStat_Pool)
-        artifact_subStat = choice(subStat_Pool,
+        subStat_probabilities = self.SubStat_Probabilities_From_Weights(subStat_Weights)
+        artifact_subStat = choice(list(subStat_probabilities.keys()),
                                   p=list(subStat_probabilities.values()))
         # Initialize rollCount and rollValue
         artifact_substats.update(
@@ -130,7 +107,8 @@ class Artifact:
             }})
 
         # Remove substat from pool
-        subStat_Pool.remove(artifact_subStat)
+        with contextlib.suppress(KeyError):
+            subStat_Pool.pop(artifact_subStat)
 
         # Update self.artifact_substats
         self.artifact_substats.update(artifact_substats)
@@ -207,9 +185,16 @@ class Artifact:
     def get_substat_list(self):
         return self.artifact_substats.keys()
 
-
-
-
+    # Weighted substats without replacement
+    def SubStat_Probabilities_From_Weights(self, substat_weights):
+        subStat_Probabilities = {}
+        substats = list(substat_weights.keys())
+        for subStat in substats:
+            sumOfWeights = 0
+            for subStat2 in substats:
+                sumOfWeights += substat_weights[subStat2]
+            subStat_Probabilities[subStat] = substat_weights[subStat] / sumOfWeights
+        return subStat_Probabilities
 
 
 
