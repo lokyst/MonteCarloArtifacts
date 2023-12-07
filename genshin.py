@@ -1,4 +1,4 @@
-import Filter as f
+import filter as f
 import copy
 
 slotType = ['flower', 'feather', 'sands', 'goblet', 'circlet']

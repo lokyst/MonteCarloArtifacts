@@ -1,7 +1,7 @@
 from numpy.random import choice
 import contextlib
 import genshin as g
-import Filter as f
+import filter as f
 
 # Get list of equip slot names
 slotType = g.slotType
