@@ -142,7 +142,7 @@ From <https://www.reddit.com/r/GenshinImpactTips/comments/xwbvrb/guide_to_choose
 '''
 
 # Filters at +0
-filters_0 = [
+filters_T0 = [
     {
         # 0. Keep any artifact with CR && CD
         'f': f.Artifact_Accept_Filter,
@@ -219,25 +219,25 @@ filters_0 = [
 ]
 
 # Tighten Filters at +4
-filters_4 = copy.deepcopy(filters_0)
+filters_T1 = copy.deepcopy(filters_T0)
 # 0. No change. Let's see if we get lucky at +8
 # 1. No change. EM is a rare mainstat and chars built around EM often do not care about other stats
 # 2. No change. CR and CD are rare main stats.
 # 3. Keep any sands with atkp or er and at least 1 desireable stat
-filters_4[3]['p']['substat_matches'] = 1
+filters_T1[3]['p']['substat_matches'] = 1
 # 4. Keep any goblet with dmgp and at least 1 crit stat
-filters_4[4]['p']['substats'] = ['cr', 'cd']
-filters_4[4]['p']['substat_matches'] = 1
+filters_T1[4]['p']['substats'] = ['cr', 'cd']
+filters_T1[4]['p']['substat_matches'] = 1
 # 5. Keep any sand, circlet or goblet with hpp, defp, atkp and CR && CD
-filters_4[6]['p']['substats'] = ['cr', 'cd']
-filters_4[5]['p']['substat_matches'] = 2
+filters_T1[6]['p']['substats'] = ['cr', 'cd']
+filters_T1[5]['p']['substat_matches'] = 2
 # 6. Keep any flower or feather with CR && CD
-filters_4[6]['p']['substats'] = ['cr', 'cd']
-filters_4[6]['p']['substat_matches'] = 2
+filters_T1[6]['p']['substats'] = ['cr', 'cd']
+filters_T1[6]['p']['substat_matches'] = 2
 
 # Rollcount filters
-filters_12 = copy.deepcopy(filters_0)
-for filter in filters_12:
+filters_T2 = copy.deepcopy(filters_T0)
+for filter in filters_T2:
     filter.update({'f': f.Artifact_Rollcount_Filter})
     filter['p'].update({'substats': ['atkp', 'er', 'em', 'cr', 'cd']})
     filter['p'].update({'min_roll_count': 3})

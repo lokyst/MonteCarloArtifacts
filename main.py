@@ -201,18 +201,19 @@ class Artifact:
 ##########################################
 # Simulation
 ##########################################
-nSuccess_0 = 0
-nSuccess_4 = 0
-nSuccess_12 = 0
+nSuccess_T0 = 0
+nSuccess_T1 = 0
+nSuccess_T2 = 0
 trials = 1000
 
 artifact_exp_consumed = 0
 artifact_exp_gained = 0
 artifact_exp_by_level = g.exp_level_info['5*']
 
-lvl_0_exp_gained = g.base_exp_gain['5*']
-lvl_4_exp_gained = lvl_0_exp_gained + sum(artifact_exp_by_level[:4]) * 0.8
-lvl_12_exp_gained = lvl_0_exp_gained + sum(artifact_exp_by_level[:12]) * 0.8
+# Exp gained from foddering at different levels
+T0_exp_gained = g.base_exp_gain['5*']
+T1_exp_gained = T0_exp_gained + sum(artifact_exp_by_level[:g.artifact_substat_level_increment]) * 0.8
+T2_exp_gained = T0_exp_gained + sum(artifact_exp_by_level[:(g.artifact_substat_level_increment*2)]) * 0.8
 
 # Generate Random Artifact
 artifact = Artifact(artifact_max_level=g.artifact_max_level, artifact_substat_level_increment=g.artifact_substat_level_increment)
@@ -225,8 +226,8 @@ for i in range(trials):
     lvl_start = 0
     lvl_end = 0
 
-    if f.Keep_Artifact(artifact, g.filters_0, g.filters_exclude):
-        nSuccess_0 += 1
+    if f.Keep_Artifact(artifact, g.filters_T0, g.filters_exclude):
+        nSuccess_T0 += 1
 
         # +4
         artifact.Level_Artifact(artifact.artifact_substat_level_increment)
@@ -235,8 +236,8 @@ for i in range(trials):
         artifact_exp_consumed += sum(artifact_exp_by_level[lvl_start:lvl_end])
         lvl_start = lvl_end
 
-        if f.Keep_Artifact(artifact, g.filters_4, g.filters_exclude):
-            nSuccess_4 += 1
+        if f.Keep_Artifact(artifact, g.filters_T1, g.filters_exclude):
+            nSuccess_T1 += 1
 
             # +8
             artifact.Level_Artifact(artifact.artifact_substat_level_increment)
@@ -251,8 +252,8 @@ for i in range(trials):
             artifact_exp_consumed += sum(artifact_exp_by_level[lvl_start:lvl_end])
             lvl_start = lvl_end
 
-            if f.Keep_Artifact(artifact, g.filters_12, []):
-                nSuccess_12 += 1
+            if f.Keep_Artifact(artifact, g.filters_T2, []):
+                nSuccess_T2 += 1
 
                 # +16
                 artifact.Level_Artifact(artifact.artifact_substat_level_increment)
@@ -268,17 +269,17 @@ for i in range(trials):
                 lvl_start = lvl_end
             
             else:
-                artifact_exp_gained += lvl_12_exp_gained
+                artifact_exp_gained += T2_exp_gained
 
         else:
-            artifact_exp_gained += lvl_4_exp_gained
+            artifact_exp_gained += T1_exp_gained
 
     else:
-        artifact_exp_gained += lvl_0_exp_gained
+        artifact_exp_gained += T0_exp_gained
 
-print('0: %s %s' % (nSuccess_0, nSuccess_0 / trials))
-print('4: %s %s' % (nSuccess_4, nSuccess_4 / trials))
-print('12: %s %s' % (nSuccess_12, nSuccess_12 / trials))
+print('T0: %s %s' % (nSuccess_T0, nSuccess_T0 / trials))
+print('T1: %s %s' % (nSuccess_T1, nSuccess_T1 / trials))
+print('T2: %s %s' % (nSuccess_T2, nSuccess_T2 / trials))
 print('Artifact Exp Used: %i' % artifact_exp_consumed)
 print('Artifact Exp Gained (5stars only): %i' % artifact_exp_gained)
 
@@ -290,4 +291,4 @@ print('Non 5 Star Exp Gained: %i' % non_5star_exp_gained)
 print('Total Exp Gained: %i' % (non_5star_exp_gained + artifact_exp_gained))
 exp_surplus = non_5star_exp_gained + artifact_exp_gained - artifact_exp_consumed
 print('Exp Surplus: %i' % exp_surplus)
-print('Exp lost from foddering Lvl_0: %i' % ((trials-nSuccess_0)*lvl_0_exp_gained))
+print('Exp lost from foddering Lvl_0: %i' % ((trials-nSuccess_T0)*T0_exp_gained))
