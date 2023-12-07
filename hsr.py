@@ -1,3 +1,6 @@
+import filter as f
+import copy
+
 #https://www.reddit.com/r/HonkaiStarRail/comments/15f52to/relics_mainstats_and_substats_probability/
 
 slotType = ['head', 'hands', 'body', 'feet', 'sphere', 'rope']
