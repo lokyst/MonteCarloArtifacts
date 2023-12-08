@@ -85,6 +85,7 @@ base_exp_gain = {
 
 artifact_max_level = 15
 artifact_substat_level_increment = 3
+artifact_max_lines = 4
 non_5star_exp_per_run = 5.00*base_exp_gain['4*']
 n_5stars_per_run = 2.1
 
