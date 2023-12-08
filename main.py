@@ -50,10 +50,10 @@ class Artifact:
         else:
             self.artifact_lines = len(self.artifact_substats.keys())
 
-        self.artifact_max_lines = artifact_max_lines or 4
+        self.artifact_max_lines = artifact_max_lines or g.artifact_max_lines
         self.artifact_level = artifact_level or 0
-        self.artifact_max_level = artifact_max_level or 20
-        self.artifact_substat_level_increment = artifact_substat_level_increment or 4
+        self.artifact_max_level = artifact_max_level or g.artifact_max_level
+        self.artifact_substat_level_increment = artifact_substat_level_increment or g.artifact_substat_level_increment
 
     def __str__(self):
         return f"Type: '{self.artifact_type}' Main: '{self.artifact_mainstat}' Lvl : '{self.artifact_level}' Subs: {self.artifact_substats}"
@@ -70,7 +70,7 @@ class Artifact:
         # Generate random artifact substats based on slot and mainstat
 
         # Randomly generate substats based on sampling from substat pool without replacement
-        for i in range(self.artifact_lines):
+        for i in range(self.artifact_lines - len(self.artifact_substats.keys())):
             self.Add_Substat()
 
     def Add_Substat(self):
@@ -121,6 +121,7 @@ class Artifact:
 
         # Return if already at max level
         if self.artifact_level >= self.artifact_max_level:
+            print('Artifact level equal to or greater than max')
             return
 
         # Record start and end states because we need to count how many substat increments occurred
@@ -129,7 +130,6 @@ class Artifact:
 
         # Fix hardcoded substat level increment
         substat_increments = final_level // self.artifact_substat_level_increment - start_level // self.artifact_substat_level_increment
-        self.Increment_Substat(n_increments=substat_increments)
 
         for _ in range(substat_increments):
             if len(self.artifact_substats.keys()) < self.artifact_max_lines:
@@ -141,6 +141,9 @@ class Artifact:
 
     def random(self, slotpool=None):
         # Generate a random artifact
+
+        # Reset level and other defaults
+        self.artifact_level = 0
 
         # Randomly choose a slot assuming equal probabilities for all slots
         slot_Pool = slotpool or slotType.copy()
@@ -154,7 +157,6 @@ class Artifact:
         # Randomly choose the number of substat lines assuming a 5* artifact
         # TODO: Make this more generic
         self.artifact_lines = choice([3, 4], p=[0.80, 0.20])
-
         # Generate artifact mainstat and substats
         self.artifact_mainstat = None
         self.artifact_substats.clear()
@@ -197,8 +199,8 @@ class Artifact:
 nSuccess_T0 = 0
 nSuccess_T1 = 0
 nSuccess_T2 = 0
-debug = True
-trials = 1
+debug = False
+trials = 100
 
 artifact_exp_consumed = 0
 artifact_exp_gained = 0
@@ -215,9 +217,10 @@ artifact = Artifact(artifact_max_level=g.artifact_max_level, artifact_substat_le
 for i in range(trials):
     artifact.random()
     if debug:
-        artifact = Artifact('goblet', None, 'atkp')
-        artifact.Generate_Substats()
+        #artifact = Artifact('goblet', None, 'dmgp', ['cr', 'hpp', 'def'])
+        #artifact.Generate_Substats()
         artifact.print()
+        pass
     lvl_start = 0
     lvl_end = 0
 
@@ -226,10 +229,12 @@ for i in range(trials):
 
         # +4
         artifact.Level_Artifact(artifact.artifact_substat_level_increment)
-        if debug:
-            artifact.print()
         lvl_end = lvl_start + artifact.artifact_substat_level_increment
         artifact_exp_consumed += sum(artifact_exp_by_level[lvl_start:lvl_end])
+        if debug:
+            artifact.print()
+            print('exp required: %s' % artifact_exp_consumed)
+            pass
         lvl_start = lvl_end
 
         if f.Keep_Artifact(artifact, g.filters_T1, g.filters_exclude, debug):
@@ -243,10 +248,12 @@ for i in range(trials):
 
             # +12
             artifact.Level_Artifact(artifact.artifact_substat_level_increment)
-            if debug:
-                artifact.print()
             lvl_end = lvl_start + artifact.artifact_substat_level_increment
             artifact_exp_consumed += sum(artifact_exp_by_level[lvl_start:lvl_end])
+            if debug:
+                artifact.print()
+                print('exp required: %s' % artifact_exp_consumed)
+                pass
             lvl_start = lvl_end
 
             if f.Keep_Artifact(artifact, g.filters_T2, [], debug):
@@ -260,10 +267,12 @@ for i in range(trials):
 
                 # +20
                 artifact.Level_Artifact(artifact.artifact_substat_level_increment)
-                if debug:
-                    artifact.print()
                 lvl_end = lvl_start + artifact.artifact_substat_level_increment
                 artifact_exp_consumed += sum(artifact_exp_by_level[lvl_start:lvl_end])
+                if debug:
+                    artifact.print()
+                    print('exp required: %s' % artifact_exp_consumed)
+                    pass
                 lvl_start = lvl_end
             
             else:
