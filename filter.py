@@ -56,19 +56,23 @@ def Keep_Artifact(artifact, inclusion_filters, exclusion_filters, debug=False):
     for i in range(len(inclusion_filters)):
         if inclusion_filters[i]['f'](artifact, inclusion_filters[i]['p']):
             state = True
-            if debug:
-                print('Accepted: Rule %i' % i)
             break
 
-    if not state and debug:
-        print('Rejected: No matches')
+    if not state:
+        if debug:
+            print('Rejected: No matches')
+        return state
 
     # Exclusion will always override
     for j in range(len(exclusion_filters)):
         if exclusion_filters[j]['f'](artifact, exclusion_filters[j]['p']):
             state = False
-            if debug:
-                print('Rejected: Rule %i' % j)
             break
+
+    if debug:
+        if state:
+            print('Accepted: Rule %i' % i)
+        else: 
+            print('Rejected: Rule %i' % j)
 
     return state

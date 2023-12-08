@@ -82,7 +82,8 @@ base_exp_gain = {
 
 artifact_max_level = 20
 artifact_substat_level_increment = 4
-
+non_5star_exp_per_run = 3.55*base_exp_gain['3*'] + 2.48*base_exp_gain['4*']
+n_5stars_per_run = 1.07
 
 ##########################################
 # Sanity Checks
@@ -96,14 +97,16 @@ def SubStat_Probabilities(subStats):
         subStat_Probabilities[subStat] = subStat_Weights[subStat] / sumOfWeights
     return subStat_Probabilities
 
-# Must sum to 1
-for key in slotInfo:
-    print(key, sum(slotInfo[key]['mainstat_probabilities']))
-
-subStat_Probabilities = SubStat_Probabilities(subStat_Weights)
-for key in subStat_Probabilities:
-    print('%4s %.4f' % (key, subStat_Probabilities[key]))
-
+debug = False
+if debug:
+    # Must sum to 1
+    for key in slotInfo:
+        print(key, sum(slotInfo[key]['mainstat_probabilities']))
+    
+    subStat_Probabilities = SubStat_Probabilities(subStat_Weights)
+    for key in subStat_Probabilities:
+        print('%4s %.4f' % (key, subStat_Probabilities[key]))
+    
 
 ##########################################
 # Filter Sets
