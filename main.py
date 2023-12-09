@@ -217,11 +217,13 @@ class Artifact:
 ##########################################
 # Simulation
 ##########################################
-nSuccess_T0 = 0
-nSuccess_T1 = 0
-nSuccess_T2 = 0
 debug = False
 trials = 1000
+
+# Initialize counters
+successes_by_tier = {}
+for tier in g.tiers:
+    successes_by_tier.update({tier: 0})
 slot_counter = {
     'flower': 0,
     'feather': 0,
@@ -229,7 +231,6 @@ slot_counter = {
     'goblet': 0,
     'circlet': 0,
 }
-
 artifact_exp_consumed = 0
 artifact_exp_gained = 0
 artifacts_by_starting_lines = {
@@ -248,17 +249,23 @@ for i in range(trials):
         print('')
         artifact.print()
         pass
-
     if not c.artifact_is_valid(artifact, 0, g):
         artifact.print()
 
+    lvl = 0
+    tiers = g.tiers.copy()
+    tiers.sort()
+    tiers.reverse()
+    tier = tiers.pop()
+
     # Lvl0 Filter
-    if f.Keep_Artifact(artifact, g.filters_T0, g.filters_exclude, debug):
-        nSuccess_T0 += 1
+    if f.Keep_Artifact(artifact, g.filters[tier], g.filters_exclude, debug):
+        successes_by_tier[tier] += 1
 
         # +4
         artifact_exp_consumed += artifact.Level_Artifact(artifact.artifact_substat_level_increment)
-        if not c.artifact_is_valid(artifact, 4, g):
+        lvl += artifact.artifact_substat_level_increment
+        if not c.artifact_is_valid(artifact, lvl, g):
             artifact.print()
 
         if debug:
@@ -266,18 +273,22 @@ for i in range(trials):
             print('exp required: %s' % artifact_exp_consumed)
             pass
 
+        tier = tiers.pop()
+            
         # Lvl4 Filter
-        if f.Keep_Artifact(artifact, g.filters_T1, g.filters_exclude, debug):
-            nSuccess_T1 += 1
+        if f.Keep_Artifact(artifact, g.filters[tier], g.filters_exclude, debug):
+            successes_by_tier[tier] += 1
 
             # +8
             artifact_exp_consumed += artifact.Level_Artifact(artifact.artifact_substat_level_increment)
-            if not c.artifact_is_valid(artifact, 8, g):
+            lvl += artifact.artifact_substat_level_increment
+            if not c.artifact_is_valid(artifact, lvl, g):
                 artifact.print()
 
             # +12
             artifact_exp_consumed += artifact.Level_Artifact(artifact.artifact_substat_level_increment)
-            if not c.artifact_is_valid(artifact, 12, g):
+            lvl += artifact.artifact_substat_level_increment
+            if not c.artifact_is_valid(artifact, lvl, g):
                 artifact.print()
 
             if debug:
@@ -285,16 +296,20 @@ for i in range(trials):
                 print('exp required: %s' % artifact_exp_consumed)
                 pass
 
+            tier = tiers.pop()
+            
             # Lvl12 Filter
-            if f.Keep_Artifact(artifact, g.filters_T2, [], debug):
-                nSuccess_T2 += 1
+            if f.Keep_Artifact(artifact, g.filters[tier], [], debug):
+                successes_by_tier[tier] += 1
 
                 # +16
                 artifact_exp_consumed += artifact.Level_Artifact(artifact.artifact_substat_level_increment)
+                lvl += artifact.artifact_substat_level_increment
 
                 # +20
                 artifact_exp_consumed += artifact.Level_Artifact(artifact.artifact_substat_level_increment)
-                if not c.artifact_is_valid(artifact, 20, g):
+                lvl += artifact.artifact_substat_level_increment
+                if not c.artifact_is_valid(artifact, lvl, g):
                     artifact.print()
 
                 if debug:
@@ -307,20 +322,19 @@ for i in range(trials):
             
             else:
                 artifact_exp_gained += artifact.fodder()
-                c.verify_artifact_fodder_exp_return(artifact, 12, g)
+                c.verify_artifact_fodder_exp_return(artifact, tier, g)
 
         else:
             artifact_exp_gained += artifact.fodder()
-            c.verify_artifact_fodder_exp_return(artifact, 4, g)
+            c.verify_artifact_fodder_exp_return(artifact, tier, g)
 
     else:
         artifact_exp_gained += artifact.fodder()
-        c.verify_artifact_fodder_exp_return(artifact, 0, g)
+        c.verify_artifact_fodder_exp_return(artifact, tier, g)
 
 print('')
-print('T0: %s %s' % (nSuccess_T0, nSuccess_T0 / trials))
-print('T1: %s %s' % (nSuccess_T1, nSuccess_T1 / trials))
-print('T2: %s %s' % (nSuccess_T2, nSuccess_T2 / trials))
+for i in successes_by_tier:
+    print('%3s: %4i  %.3f' % (('T'+str(i)), successes_by_tier[i], successes_by_tier[i] / trials))
 
 n_runs = trials/g.n_5stars_per_run
 non_5star_exp_gained = n_runs * g.non_5star_exp_per_run
@@ -332,7 +346,10 @@ print('Artifact Exp Gained (5stars only): %i' % artifact_exp_gained)
 print('Non 5 Star Exp Gained: %i' % non_5star_exp_gained)
 print('Total Exp Gained: %i' % (non_5star_exp_gained + artifact_exp_gained))
 print('Exp Surplus: %i' % exp_surplus)
-print('Exp lost if foddering Lvl_0: %i' % ((trials-nSuccess_T0)*g.base_exp_gain['5*']))
+
+tier = 0
+print('Exp lost if foddering Lvl_%i: %i' % (tier, (trials-successes_by_tier[tier])*g.base_exp_gain['5*']))
+
 print('')
 print('L20 Artifacts Summary: ')
 print(artifacts_by_starting_lines)

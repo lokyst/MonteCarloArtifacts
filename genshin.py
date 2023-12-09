@@ -145,7 +145,8 @@ From <https://www.reddit.com/r/GenshinImpactTips/comments/xwbvrb/guide_to_choose
 '''
 
 # Filters at +0
-filters_T0 = [
+filters = {}
+filters.update({0: [
     {
         # 0. Keep any artifact with CR && CD
         'f': f.Artifact_Accept_Filter,
@@ -219,24 +220,24 @@ filters_T0 = [
             'substat_matches': 1,
         },
     },
-]
+]})
 
 # Tighten Filters at +4
-filters_T1 = copy.deepcopy(filters_T0)
+filters.update({4: copy.deepcopy(filters[0])})
 # 0. No change. Let's see if we get lucky at +8
 # 1. No change. EM is a rare mainstat and chars built around EM often do not care about other stats
 # 2. No change. CR and CD are rare main stats.
 # 3. Keep any sands with atkp or er and at least 1 desireable stat
-filters_T1[3]['p']['substat_matches'] = 1
+filters[4][3]['p']['substat_matches'] = 1
 # 4. Keep any goblet with dmgp and at least 1 crit stat
-filters_T1[4]['p']['substats'] = ['cr', 'cd']
-filters_T1[4]['p']['substat_matches'] = 1
+filters[4][4]['p']['substats'] = ['cr', 'cd']
+filters[4][4]['p']['substat_matches'] = 1
 # 5. Keep any sand, circlet or goblet with hpp, defp, atkp and CR && CD
-filters_T1[6]['p']['substats'] = ['cr', 'cd']
-filters_T1[5]['p']['substat_matches'] = 2
+filters[4][6]['p']['substats'] = ['cr', 'cd']
+filters[4][5]['p']['substat_matches'] = 2
 # 6. Keep any flower or feather with CR && CD
-filters_T1[6]['p']['substats'] = ['cr', 'cd']
-filters_T1[6]['p']['substat_matches'] = 2
+filters[4][6]['p']['substats'] = ['cr', 'cd']
+filters[4][6]['p']['substat_matches'] = 2
 
 '''
 Assuming only CR & CD are desireable:
@@ -245,8 +246,8 @@ Assuming only CR & CD are desireable:
 - therefore the best we can get at +8 is 3/8 or 4/9
 '''
 # Rollcount filters
-filters_T2 = copy.deepcopy(filters_T0)
-for filter in filters_T2:
+filters.update({12: copy.deepcopy(filters[0])})
+for filter in filters[12]:
     filter.update({'f': f.Artifact_Rollcount_Filter})
     filter['p'].update({'substats': ['cr', 'cd', 'er', 'em', 'atkp']})
     #filter['p'].update({'substats': ['cr', 'cd']})
@@ -271,3 +272,6 @@ filters_exclude = [
 ]
 
 #filters_exclude = []
+
+# Tiers
+tiers = list(filters.keys())
