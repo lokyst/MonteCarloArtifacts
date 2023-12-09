@@ -3,6 +3,7 @@ import copy
 import contextlib
 import genshin as g
 import filter as f
+import check_artifact as c
 
 # Get list of equip slot names
 slotType = g.slotType
@@ -224,6 +225,9 @@ for i in range(trials):
     lvl_start = 0
     lvl_end = 0
 
+    if not c.artifact_is_valid(artifact, 0):
+        artifact.print()
+
     if f.Keep_Artifact(artifact, g.filters_T0, g.filters_exclude, debug):
         nSuccess_T0 += 1
 
@@ -236,6 +240,9 @@ for i in range(trials):
             print('exp required: %s' % artifact_exp_consumed)
             pass
         lvl_start = lvl_end
+
+        if not c.artifact_is_valid(artifact, 4):
+            artifact.print()
 
         if f.Keep_Artifact(artifact, g.filters_T1, g.filters_exclude, debug):
             nSuccess_T1 += 1
@@ -256,6 +263,9 @@ for i in range(trials):
                 pass
             lvl_start = lvl_end
 
+            if not c.artifact_is_valid(artifact, 12):
+                artifact.print()
+
             if f.Keep_Artifact(artifact, g.filters_T2, [], debug):
                 nSuccess_T2 += 1
 
@@ -274,6 +284,9 @@ for i in range(trials):
                     print('exp required: %s' % artifact_exp_consumed)
                     pass
                 lvl_start = lvl_end
+
+                if not c.artifact_is_valid(artifact, 20):
+                    artifact.print()
             
             else:
                 artifact_exp_gained += T2_exp_gained
