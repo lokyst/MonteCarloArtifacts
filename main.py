@@ -1,7 +1,7 @@
 from numpy.random import choice
 import copy
 import contextlib
-import genshin as g
+import hsr as g
 import filter as f
 import check_artifact as c
 

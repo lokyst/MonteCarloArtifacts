@@ -83,6 +83,33 @@ base_exp_gain = {
     '5*': 1500,
 }
 
+rolls_by_level = {
+    0: {
+        3: 3,
+        4: 4,             
+    },
+    3: {
+        3: 4,
+        4: 5,             
+    },
+    6: {
+        3: 5,
+        4: 6,             
+    },
+    9: {
+        3: 6,
+        4: 7,             
+    },
+    12: {
+        3: 7,
+        4: 8,             
+    },
+    15: {
+        3: 8,
+        4: 9,             
+    },
+}
+
 artifact_max_level = 15
 artifact_substat_level_increment = 3
 artifact_max_lines = 4
@@ -101,14 +128,15 @@ def SubStat_Probabilities(subStats):
         subStat_Probabilities[subStat] = subStat_Weights[subStat] / sumOfWeights
     return subStat_Probabilities
 
-# Must sum to 1
-for key in slotInfo:
-    print(key, sum(slotInfo[key]['mainstat_probabilities']))
+debug = False
+if debug:
+    # Must sum to 1
+    for key in slotInfo:
+        print(key, sum(slotInfo[key]['mainstat_probabilities']))
 
-subStat_Probabilities = SubStat_Probabilities(subStat_Weights)
-for key in subStat_Probabilities:
-    print('%4s %.4f' % (key, subStat_Probabilities[key]))
-
+    subStat_Probabilities = SubStat_Probabilities(subStat_Weights)
+    for key in subStat_Probabilities:
+        print('%4s %.4f' % (key, subStat_Probabilities[key]))
 
 ##########################################
 # Filter Sets
@@ -145,124 +173,150 @@ flower/plume. They’re good enough to clear spiral abyss.
 
 From <https://www.reddit.com/r/GenshinImpactTips/comments/xwbvrb/guide_to_choose_which_artifact_keep_and_level_up/> 
 '''
-
+# Mainstats
+# ['hp', 'atk', 'hpp', 'atkp', 'defp', 'ehr', 'ohb', 'cr', 'cd', 'spd', 'edmg', 'be', 'err']
+# Substats
+# ['hp', 'atk', 'def', 'hpp', 'atkp', 'defp', 'be', 'ehr', 'eres', 'cr', 'cd', 'spd',]
 # Filters at +0
-filters_T0 = [
+filters = {}
+filters.update({0: [
     {
         # 0. Keep any artifact with CR && CD
         'f': f.Artifact_Accept_Filter,
         'p': {
-            'types': ['flower', 'feather', 'sands', 'goblet', 'circlet'],
+            'types': ['head', 'hands', 'body', 'feet', 'sphere', 'rope'],
             'mainstats': [
-                'hp', 'atk', 'def', 'hpp', 'atkp', 'defp', 'er', 'em', 'cr',
-                'cd', 'dmgp', 'hb'
+                'hp', 'atk', 
+                'hpp', 'atkp', 'defp', 
+                'ehr', 'ohb', 'cr', 'cd', 
+                'spd', 
+                'edmg', 
+                'be', 'err',
             ],
             'substats': ['cr', 'cd'],
             'substat_matches': 2,
         }
     },
     {
-        # 1. Keep any circlet, sands, or goblet with mainstat em
+        # 1. Keep any feet or ropes with mainstat spd or err
         'f': f.Artifact_Accept_Filter,
         'p': {
-            'types': ['circlet', 'sands', 'goblet'],
-            'mainstats': ['em'],
-            'substats': [],
+            'types': ['feet', 'rope'],
+            'mainstats': ['spd', 'err'],
+            'substats': ['ehr', 'eres', 'cr', 'cd',],
             'substat_matches': 0,
         },
     },
     {
-        # 2. Keep any circlet with mainstat of either CR || CD
+        # 2. Keep any body with mainstat of either CR || CD
         'f': f.Artifact_Accept_Filter,
         'p': {
-            'types': ['circlet'],
+            'types': ['body'],
             'mainstats': ['cr', 'cd'],
-            'substats': [],
+            'substats': ['cr', 'cd', 'atkp', 'spd'],
             'substat_matches': 0,
         }
     },
     {
-        # 3. Keep any sands with atkp or er
+        # 3. Keep any feet with atkp
         'f': f.Artifact_Accept_Filter,
         'p': {
-            'types': ['sands'],
-            'mainstats': ['atkp', 'er'],
-            'substats': ['cr', 'cd', 'er', 'em', 'atkp'],
+            'types': ['feet'],
+            'mainstats': ['atkp'],
+            'substats': ['cr', 'cd', 'spd'],
             'substat_matches': 0,
         },
     },
     {
-        # 4. Keep any goblet with dmgp
+        # 4. Keep any sphere with edmg
         'f': f.Artifact_Accept_Filter,
         'p': {
-            'types': ['goblet'],
-            'mainstats': ['dmgp'],
-            'substats': ['cr', 'cd', 'er', 'em', 'atkp'],
+            'types': ['sphere'],
+            'mainstats': ['edmg'],
+            'substats': ['cr', 'cd', 'spd'],
             'substat_matches': 0,
         },
     },
     {
-        # 5. Keep any sand, circlet or goblet with hpp, defp, atkp and at least one crit stat
+        # 5. Keep any body, feet, sphere, or rope with hpp, defp, atkp and at least one crit stat or spd stat
         'f': f.Artifact_Accept_Filter,
         'p': {
-            'types': ['sands', 'goblet', 'circlet'],
+            'types': ['body', 'feet', 'sphere', 'rope'],
             'mainstats': ['hpp', 'defp', 'atkp'],
-            'substats': ['cr', 'cd'],
+            'substats': ['cr', 'cd', 'spd'],
             'substat_matches': 1,
         },
     },
     {
-        # 6. Keep any flower or feather with at least one crit stat
+        # 6. Keep any flower or feather with at least one crit stat or spd stat
         'f': f.Artifact_Accept_Filter,
         'p': {
-            'types': ['flower', 'feather'],
+            'types': ['head', 'hands'],
             'mainstats': ['hp', 'atk'],
-            'substats': ['cr', 'cd'],
+            'substats': ['cr', 'cd', 'spd'],
             'substat_matches': 1,
         },
     },
-]
+]})
 
-# Tighten Filters at +4
-filters_T1 = copy.deepcopy(filters_T0)
+# Tighten Filters at +3
+filters.update({3: copy.deepcopy(filters[0])})
 # 0. No change. Let's see if we get lucky at +8
 # 1. No change. EM is a rare mainstat and chars built around EM often do not care about other stats
 # 2. No change. CR and CD are rare main stats.
 # 3. Keep any sands with atkp or er and at least 1 desireable stat
-filters_T1[3]['p']['substat_matches'] = 1
+filters[3][3]['p']['substat_matches'] = 1
 # 4. Keep any goblet with dmgp and at least 1 crit stat
-filters_T1[4]['p']['substats'] = ['cr', 'cd']
-filters_T1[4]['p']['substat_matches'] = 1
+filters[3][4]['p']['substats'] = ['cr', 'cd']
+filters[3][4]['p']['substat_matches'] = 1
 # 5. Keep any sand, circlet or goblet with hpp, defp, atkp and CR && CD
-filters_T1[6]['p']['substats'] = ['cr', 'cd']
-filters_T1[5]['p']['substat_matches'] = 2
+filters[3][6]['p']['substats'] = ['cr', 'cd']
+filters[3][5]['p']['substat_matches'] = 2
 # 6. Keep any flower or feather with CR && CD
-filters_T1[6]['p']['substats'] = ['cr', 'cd']
-filters_T1[6]['p']['substat_matches'] = 2
+filters[3][6]['p']['substats'] = ['cr', 'cd']
+filters[3][6]['p']['substat_matches'] = 2
 
+'''
+Assuming only CR & CD are desireable:
+- the absolute best we can get at +15 is 6/8 or 7/9
+- therefore the best we can get at +9 is 4/8 or 5/9
+- therefore the best we can get at +6 is 3/8 or 4/9
+'''
 # Rollcount filters
-filters_T2 = copy.deepcopy(filters_T0)
-for filter in filters_T2:
+filters.update({9: copy.deepcopy(filters[0])})
+for filter in filters[9]:
     filter.update({'f': f.Artifact_Rollcount_Filter})
-    filter['p'].update({'substats': ['atkp', 'er', 'em', 'cr', 'cd']})
-    filter['p'].update({'min_roll_count': 3})
+    filter['p'].update({'substats': ['cr', 'cd', 'spd', 'atkp']})
+    #filter['p'].update({'substats': ['cr', 'cd']})
+    filter['p'].update({'min_roll_count': 5})
 
 # Rejection filters
-filters_exclude = [
+filters_exclude = {}
+filters_exclude.update({0: [
     {
         # 0. Reject any artifact with two flat stats
         'f': f.Artifact_Reject_Filter,
         'p': {
-            'types': ['flower', 'feather', 'sands', 'goblet', 'circlet'],
+            'types': ['head', 'hands', 'body', 'feet', 'sphere', 'rope'],
             'mainstats': [
-                'hp', 'atk', 'def', 'hpp', 'atkp', 'defp', 'er', 'em', 'cr',
-                'cd', 'dmgp', 'hb'
+                'hp', 'atk', 
+                'hpp', 'atkp', 'defp', 
+                'ehr', 'ohb', 'cr', 'cd', 
+                'spd', 
+                'edmg', 
+                'be', 'err',
             ],
             'substats': ['hp', 'def', 'atk'],
             'starting_substat_lines': 3,
             'substat_matches': 2,
         }
     },
-]
+]})
+
+filters_exclude.update({3: copy.deepcopy(filters_exclude[0])})
+filters_exclude.update({9: copy.deepcopy(filters_exclude[0])})
 
 #filters_exclude = []
+
+# Tiers
+tiers = list(filters.keys())
