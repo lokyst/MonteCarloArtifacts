@@ -189,8 +189,7 @@ class Artifact:
         print('Level: %s' % self.artifact_level)
         for i in self.artifact_substats.keys():
             print('SubStat: %s cnt: %s' %
-                  (i, self.artifact_substats[i]['rollCount']))
-     
+                  (i, self.artifact_substats[i]['rollCount']))     
 
     def get_substat_lines(self):
         return len(self.artifact_substats.keys())
@@ -215,7 +214,6 @@ class Artifact:
         
 
 
-
 ##########################################
 # Simulation
 ##########################################
@@ -234,12 +232,6 @@ slot_counter = {
 
 artifact_exp_consumed = 0
 artifact_exp_gained = 0
-artifact_exp_by_level = g.exp_level_info['5*']
-
-# Exp gained from foddering at different levels
-T0_exp_gained = g.base_exp_gain['5*']
-T1_exp_gained = T0_exp_gained + sum(artifact_exp_by_level[:g.artifact_substat_level_increment]) * 0.8
-T2_exp_gained = T0_exp_gained + sum(artifact_exp_by_level[:(g.artifact_substat_level_increment*2)]) * 0.8
 
 # Generate Random Artifact
 artifact = Artifact(artifact_max_level=g.artifact_max_level, artifact_substat_level_increment=g.artifact_substat_level_increment)
@@ -324,10 +316,8 @@ print('T0: %s %s' % (nSuccess_T0, nSuccess_T0 / trials))
 print('T1: %s %s' % (nSuccess_T1, nSuccess_T1 / trials))
 print('T2: %s %s' % (nSuccess_T2, nSuccess_T2 / trials))
 
-non_5star_exp_per_run = g.non_5star_exp_per_run
-n_5stars_per_run = g.n_5stars_per_run
-n_runs = trials/n_5stars_per_run
-non_5star_exp_gained = n_runs * non_5star_exp_per_run
+n_runs = trials/g.n_5stars_per_run
+non_5star_exp_gained = n_runs * g.non_5star_exp_per_run
 exp_surplus = non_5star_exp_gained + artifact_exp_gained - artifact_exp_consumed
 
 print('')
