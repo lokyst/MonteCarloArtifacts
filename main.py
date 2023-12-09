@@ -33,9 +33,9 @@ class Artifact:
         artifact_max_level = None,
         artifact_substat_level_increment = None,
     ):
-        self.artifact_type = artifact_type or 'flower'
+        self.artifact_type = artifact_type or g.slotType[0]
         self.artifact_set = artifact_set
-        self.artifact_mainstat = artifact_mainstat or 'hp'
+        self.artifact_mainstat = artifact_mainstat or g.slotInfo[self.artifact_type]['mainstats'][0]
         self.artifact_rarity = artifact_rarity or '5*'
 
         if isinstance(artifact_substats, list):
@@ -233,19 +233,15 @@ class Artifact:
 # Simulation
 ##########################################
 debug = False
-trials = 1000
+trials = 10
 
 # Initialize counters
 successes_by_tier = {}
 for tier in g.tiers:
     successes_by_tier.update({tier: 0})
-slot_counter = {
-    'flower': 0,
-    'feather': 0,
-    'sands': 0,
-    'goblet': 0,
-    'circlet': 0,
-}
+slot_counter = {}
+for slot in g.slotType:
+    slot_counter.update({slot: 0})
 artifact_exp_consumed = 0
 artifact_exp_gained = 0
 artifacts_by_starting_lines = {
