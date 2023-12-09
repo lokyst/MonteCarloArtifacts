@@ -165,7 +165,6 @@ class Artifact:
         self.Generate_Substats()
 
     def print(self):
-        print('')
         print('Set: %s' % self.artifact_set)
         print('Slot: %s' % self.artifact_type)
         print('MainStat: %s ' % self.artifact_mainstat)

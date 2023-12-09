@@ -61,8 +61,3 @@ def artifact_is_valid(artifact, level):
 
     return state
 
-
-        
-    
-        
-    
