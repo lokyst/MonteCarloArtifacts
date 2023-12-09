@@ -187,8 +187,8 @@ class Artifact:
         print('Slot: %s' % self.artifact_type)
         print('MainStat: %s ' % self.artifact_mainstat)
         print('Level: %s' % self.artifact_level)
-        for i in self.artifact_substats.keys():
-            print('SubStat: %s cnt: %s' %
+        for i in self.artifact_substats:
+            print('%4s cnt: %i' %
                   (i, self.artifact_substats[i]['rollCount']))     
 
     def get_substat_lines(self):
@@ -221,7 +221,7 @@ nSuccess_T0 = 0
 nSuccess_T1 = 0
 nSuccess_T2 = 0
 debug = False
-trials = 1000
+trials = 10
 slot_counter = {
     'flower': 0,
     'feather': 0,
@@ -241,6 +241,7 @@ for i in range(trials):
     if debug:
         #artifact = Artifact('goblet', None, 'dmgp', ['cr', 'hpp', 'def'])
         #artifact.Generate_Substats()
+        print('')
         artifact.print()
         pass
 
