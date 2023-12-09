@@ -27,6 +27,7 @@ class Artifact:
         artifact_set=None,
         artifact_mainstat=None,
         artifact_substats=None,
+        artifact_rarity=None,
         artifact_max_lines=None,
         artifact_level = None,
         artifact_max_level = None,
@@ -35,6 +36,7 @@ class Artifact:
         self.artifact_type = artifact_type or 'flower'
         self.artifact_set = artifact_set
         self.artifact_mainstat = artifact_mainstat or 'hp'
+        self.artifact_rarity = artifact_rarity or '5*'
 
         if isinstance(artifact_substats, list):
             tempDict = {}
@@ -46,15 +48,23 @@ class Artifact:
         else:
             self.artifact_substats = {}
 
-        if len(self.artifact_substats.keys()) == 0:
-            self.artifact_lines = 3
-        else:
-            self.artifact_lines = len(self.artifact_substats.keys())
-
         self.artifact_max_lines = artifact_max_lines or g.artifact_max_lines
         self.artifact_level = artifact_level or 0
         self.artifact_max_level = artifact_max_level or g.artifact_max_level
         self.artifact_substat_level_increment = artifact_substat_level_increment or g.artifact_substat_level_increment
+
+        # Other internal only variables
+        # Starting artifact lines
+        if len(self.artifact_substats.keys()) == 0:
+            self.artifact_starting_lines = 3
+        else:
+            self.artifact_starting_lines = len(self.artifact_substats.keys())
+
+        # Exp tracking
+        if self.artifact_level > 0:
+            self.artifact_exp = sum(g.artifact_exp_by_level[:self.artifact_level])
+        else:
+            self.artifact_exp = 0       
 
     def __str__(self):
         return f"Type: '{self.artifact_type}' Main: '{self.artifact_mainstat}' Lvl : '{self.artifact_level}' Subs: {self.artifact_substats}"
@@ -71,7 +81,7 @@ class Artifact:
         # Generate random artifact substats based on slot and mainstat
 
         # Randomly generate substats based on sampling from substat pool without replacement
-        for i in range(self.artifact_lines - len(self.artifact_substats.keys())):
+        for i in range(self.artifact_starting_lines - len(self.artifact_substats.keys())):
             self.Add_Substat()
 
     def Add_Substat(self):
@@ -129,7 +139,11 @@ class Artifact:
         start_level = self.artifact_level
         final_level = start_level + increment
 
-        # Fix hardcoded substat level increment
+        # Increment artifact exp
+        exp_consumed = sum(g.exp_level_info[self.artifact_rarity][start_level:final_level])
+        self.artifact_exp += exp_consumed
+
+        # Determine how many substat increments occurred
         substat_increments = final_level // self.artifact_substat_level_increment - start_level // self.artifact_substat_level_increment
 
         for _ in range(substat_increments):
@@ -140,11 +154,15 @@ class Artifact:
 
         self.artifact_level = min(final_level, self.artifact_max_level)
 
+        return exp_consumed
+
     def random(self, slotpool=None):
         # Generate a random artifact
 
         # Reset level and other defaults
         self.artifact_level = 0
+        self.artifact_exp = 0
+        self.artifact_rarity = '5*'
 
         # Randomly choose a slot assuming equal probabilities for all slots
         slot_Pool = slotpool or slotType.copy()
@@ -157,7 +175,7 @@ class Artifact:
 
         # Randomly choose the number of substat lines assuming a 5* artifact
         # TODO: Make this more generic
-        self.artifact_lines = choice([3, 4], p=[0.80, 0.20])
+        self.artifact_starting_lines = choice([3, 4], p=[0.80, 0.20])
         # Generate artifact mainstat and substats
         self.artifact_mainstat = None
         self.artifact_substats.clear()
@@ -172,10 +190,10 @@ class Artifact:
         for i in self.artifact_substats.keys():
             print('SubStat: %s cnt: %s' %
                   (i, self.artifact_substats[i]['rollCount']))
-        
+     
 
     def get_substat_lines(self):
-        return self.artifact_lines
+        return len(self.artifact_substats.keys())
 
     def get_substat_list(self):
         return self.artifact_substats.keys()
@@ -191,6 +209,11 @@ class Artifact:
             subStat_Probabilities[subStat] = substat_weights[subStat] / sumOfWeights
         return subStat_Probabilities
 
+    def fodder(self):
+        # return exp from foddered artifact
+        return g.base_exp_gain[self.artifact_rarity] + 0.8 * self.artifact_exp
+        
+
 
 
 ##########################################
@@ -200,7 +223,7 @@ nSuccess_T0 = 0
 nSuccess_T1 = 0
 nSuccess_T2 = 0
 debug = False
-trials = 1000
+trials = 10
 slot_counter = {
     'flower': 0,
     'feather': 0,
@@ -231,7 +254,7 @@ for i in range(trials):
     lvl_start = 0
     lvl_end = 0
 
-    if not c.artifact_is_valid(artifact, 0):
+    if not c.artifact_is_valid(artifact, 0, g):
         artifact.print()
 
     if f.Keep_Artifact(artifact, g.filters_T0, g.filters_exclude, debug):
@@ -247,7 +270,7 @@ for i in range(trials):
             pass
         lvl_start = lvl_end
 
-        if not c.artifact_is_valid(artifact, 4):
+        if not c.artifact_is_valid(artifact, 4, g):
             artifact.print()
 
         if f.Keep_Artifact(artifact, g.filters_T1, g.filters_exclude, debug):
@@ -259,6 +282,9 @@ for i in range(trials):
             artifact_exp_consumed += sum(artifact_exp_by_level[lvl_start:lvl_end])
             lvl_start = lvl_end
 
+            if not c.artifact_is_valid(artifact, 8, g):
+                artifact.print()
+
             # +12
             artifact.Level_Artifact(artifact.artifact_substat_level_increment)
             lvl_end = lvl_start + artifact.artifact_substat_level_increment
@@ -269,7 +295,7 @@ for i in range(trials):
                 pass
             lvl_start = lvl_end
 
-            if not c.artifact_is_valid(artifact, 12):
+            if not c.artifact_is_valid(artifact, 12, g):
                 artifact.print()
 
             if f.Keep_Artifact(artifact, g.filters_T2, [], debug):
@@ -291,19 +317,22 @@ for i in range(trials):
                     pass
                 lvl_start = lvl_end
 
-                if not c.artifact_is_valid(artifact, 20):
+                if not c.artifact_is_valid(artifact, 20, g):
                     artifact.print()
 
                 slot_counter[artifact.artifact_type] += 1
             
             else:
-                artifact_exp_gained += T2_exp_gained
+                artifact_exp_gained += artifact.fodder()
+                c.verify_artifact_fodder_exp_return(artifact, 12, g)
 
         else:
-            artifact_exp_gained += T1_exp_gained
+            artifact_exp_gained += artifact.fodder()
+            c.verify_artifact_fodder_exp_return(artifact, 4, g)
 
     else:
-        artifact_exp_gained += T0_exp_gained
+        artifact_exp_gained += artifact.fodder()
+        c.verify_artifact_fodder_exp_return(artifact, 0, g)
 
 print('')
 print('T0: %s %s' % (nSuccess_T0, nSuccess_T0 / trials))
