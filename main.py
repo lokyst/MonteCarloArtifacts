@@ -200,7 +200,14 @@ nSuccess_T0 = 0
 nSuccess_T1 = 0
 nSuccess_T2 = 0
 debug = False
-trials = 100
+trials = 1000
+slot_counter = {
+    'flower': 0,
+    'feather': 0,
+    'sands': 0,
+    'goblet': 0,
+    'circlet': 0,
+}
 
 artifact_exp_consumed = 0
 artifact_exp_gained = 0
@@ -286,6 +293,8 @@ for i in range(trials):
 
                 if not c.artifact_is_valid(artifact, 20):
                     artifact.print()
+
+                slot_counter[artifact.artifact_type] += 1
             
             else:
                 artifact_exp_gained += T2_exp_gained
@@ -314,3 +323,4 @@ print('Non 5 Star Exp Gained: %i' % non_5star_exp_gained)
 print('Total Exp Gained: %i' % (non_5star_exp_gained + artifact_exp_gained))
 print('Exp Surplus: %i' % exp_surplus)
 print('Exp lost from foddering Lvl_0: %i' % ((trials-nSuccess_T0)*T0_exp_gained))
+print(slot_counter)
