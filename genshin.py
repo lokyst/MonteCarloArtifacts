@@ -166,7 +166,7 @@ filters_T0 = [
         'p': {
             'types': ['circlet', 'sands', 'goblet'],
             'mainstats': ['em'],
-            'substats': [],
+            'substats': ['cr', 'cd', 'er', 'em', 'atkp'],
             'substat_matches': 0,
         },
     },
@@ -176,7 +176,7 @@ filters_T0 = [
         'p': {
             'types': ['circlet'],
             'mainstats': ['cr', 'cd'],
-            'substats': [],
+            'substats': ['cr', 'cd', 'er', 'em', 'atkp'],
             'substat_matches': 0,
         }
     },
@@ -239,12 +239,19 @@ filters_T1[5]['p']['substat_matches'] = 2
 filters_T1[6]['p']['substats'] = ['cr', 'cd']
 filters_T1[6]['p']['substat_matches'] = 2
 
+'''
+Assuming only CR & CD are desireable:
+- the absolute best we can get at +20 is 6/8 or 7/9
+- therefore the best we can get at +12 is 4/8 or 5/9
+- therefore the best we can get at +8 is 3/8 or 4/9
+'''
 # Rollcount filters
 filters_T2 = copy.deepcopy(filters_T0)
 for filter in filters_T2:
     filter.update({'f': f.Artifact_Rollcount_Filter})
-    filter['p'].update({'substats': ['atkp', 'er', 'em', 'cr', 'cd']})
-    filter['p'].update({'min_roll_count': 3})
+    filter['p'].update({'substats': ['cr', 'cd', 'er', 'em', 'atkp']})
+    #filter['p'].update({'substats': ['cr', 'cd']})
+    filter['p'].update({'min_roll_count': 5})
 
 # Rejection filters
 filters_exclude = [
