@@ -14,7 +14,7 @@ def check_substats_exclude_mainstat(artifact):
 
     return True
 
-def check_roll_count_at_level_is_valid(artifact, level=20):
+def check_roll_count_at_level_is_valid(artifact, level):
     rolls_by_level = {
         '0': {
             '3': 3,
@@ -52,12 +52,19 @@ def check_roll_count_at_level_is_valid(artifact, level=20):
 
     return True
 
+def verify_artifact_level(artifact, level):
+    if artifact.artifact_level != level:
+        print('Artifact level is not %i: %i' % (level, artifact.artifact_level))
+        return False
+
+    return True
 
 def artifact_is_valid(artifact, level):
     state = True
     state = state and check_n_substat_lines_is_valid(artifact)
     state = state and check_substats_exclude_mainstat(artifact)
     state = state and check_roll_count_at_level_is_valid(artifact, level)
+    state = state and verify_artifact_level(artifact, level)
 
     return state
 
