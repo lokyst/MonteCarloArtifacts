@@ -256,57 +256,18 @@ for i in range(trials):
     tiers = g.tiers.copy()
     tiers.sort()
     tiers.reverse()
-    tier = tiers.pop()
 
-    # Lvl0 Filter
-    if f.Keep_Artifact(artifact, g.filters[tier], g.filters_exclude, debug):
-        successes_by_tier[tier] += 1
-
-        # +4
-        artifact_exp_consumed += artifact.Level_Artifact(artifact.artifact_substat_level_increment)
-        lvl += artifact.artifact_substat_level_increment
-        if not c.artifact_is_valid(artifact, lvl, g):
-            artifact.print()
-
-        if debug:
-            artifact.print()
-            print('exp required: %s' % artifact_exp_consumed)
-            pass
-
+    # Filter by tiers or take to max level
+    while len(tiers) > 0:
         tier = tiers.pop()
-            
-        # Lvl4 Filter
-        if f.Keep_Artifact(artifact, g.filters[tier], g.filters_exclude, debug):
+        if f.Keep_Artifact(artifact, g.filters[tier], g.filters_exclude[tier], debug):
             successes_by_tier[tier] += 1
 
-            # +8
-            artifact_exp_consumed += artifact.Level_Artifact(artifact.artifact_substat_level_increment)
-            lvl += artifact.artifact_substat_level_increment
-            if not c.artifact_is_valid(artifact, lvl, g):
-                artifact.print()
+            # Check if next increment is another tier level or max level
+            next_tier = tiers[-1] if len(tiers) > 0 else g.artifact_max_level
 
-            # +12
-            artifact_exp_consumed += artifact.Level_Artifact(artifact.artifact_substat_level_increment)
-            lvl += artifact.artifact_substat_level_increment
-            if not c.artifact_is_valid(artifact, lvl, g):
-                artifact.print()
-
-            if debug:
-                artifact.print()
-                print('exp required: %s' % artifact_exp_consumed)
-                pass
-
-            tier = tiers.pop()
-            
-            # Lvl12 Filter
-            if f.Keep_Artifact(artifact, g.filters[tier], [], debug):
-                successes_by_tier[tier] += 1
-
-                # +16
-                artifact_exp_consumed += artifact.Level_Artifact(artifact.artifact_substat_level_increment)
-                lvl += artifact.artifact_substat_level_increment
-
-                # +20
+            # Level in increments until next tier level or max level
+            while artifact.artifact_level < next_tier:
                 artifact_exp_consumed += artifact.Level_Artifact(artifact.artifact_substat_level_increment)
                 lvl += artifact.artifact_substat_level_increment
                 if not c.artifact_is_valid(artifact, lvl, g):
@@ -314,24 +275,18 @@ for i in range(trials):
 
                 if debug:
                     artifact.print()
-                    print('exp required: %s' % artifact_exp_consumed)
                     pass
- 
-                slot_counter[artifact.artifact_type] += 1
-                artifacts_by_starting_lines[artifact.artifact_starting_lines] += 1
-            
-            else:
-                artifact_exp_gained += artifact.fodder()
-                c.verify_artifact_fodder_exp_return(artifact, tier, g)
+    
+                if artifact.artifact_level == g.artifact_max_level:
+                    slot_counter[artifact.artifact_type] += 1
+                    artifacts_by_starting_lines[artifact.artifact_starting_lines] += 1
+                    break
 
         else:
             artifact_exp_gained += artifact.fodder()
             c.verify_artifact_fodder_exp_return(artifact, tier, g)
-
-    else:
-        artifact_exp_gained += artifact.fodder()
-        c.verify_artifact_fodder_exp_return(artifact, tier, g)
-
+            break
+        
 print('')
 for i in successes_by_tier:
     print('%3s: %4i  %.3f' % (('T'+str(i)), successes_by_tier[i], successes_by_tier[i] / trials))

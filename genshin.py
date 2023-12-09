@@ -254,7 +254,8 @@ for filter in filters[12]:
     filter['p'].update({'min_roll_count': 5})
 
 # Rejection filters
-filters_exclude = [
+filters_exclude = {}
+filters_exclude.update({0: [
     {
         # 0. Reject any artifact with two flat stats
         'f': f.Artifact_Reject_Filter,
@@ -269,7 +270,10 @@ filters_exclude = [
             'substat_matches': 2,
         }
     },
-]
+]})
+
+filters_exclude.update({4: copy.deepcopy(filters_exclude[0])})
+filters_exclude.update({12: copy.deepcopy(filters_exclude[0])})
 
 #filters_exclude = []
 
