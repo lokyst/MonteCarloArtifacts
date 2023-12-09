@@ -211,6 +211,21 @@ class Artifact:
     def fodder(self):
         # return exp from foddered artifact
         return g.base_exp_gain[self.artifact_rarity] + 0.8 * self.artifact_exp
+
+    def get_level(self):
+        return self.artifact_level
+
+    def get_substat_level_increment(self):
+        return self.artifact_substat_level_increment
+
+    def get_slot(self):
+        return self.artifact_type
+
+    def get_n_starting_lines(self):
+        return self.artifact_starting_lines
+
+    def get_max_level(self):
+        return self.artifact_max_level
         
 
 
@@ -239,7 +254,10 @@ artifacts_by_starting_lines = {
 }
 
 # Generate Random Artifact
-artifact = Artifact(artifact_max_level=g.artifact_max_level, artifact_substat_level_increment=g.artifact_substat_level_increment)
+artifact = Artifact(
+    artifact_max_level = g.artifact_max_level, 
+    artifact_substat_level_increment = g.artifact_substat_level_increment
+)
 
 for i in range(trials):
     artifact.random()
@@ -264,12 +282,12 @@ for i in range(trials):
             successes_by_tier[tier] += 1
 
             # Check if next increment is another tier level or max level
-            next_tier = tiers[-1] if len(tiers) > 0 else g.artifact_max_level
+            next_tier = tiers[-1] if len(tiers) > 0 else artifact.get_max_level()
 
             # Level in increments until next tier level or max level
-            while artifact.artifact_level < next_tier:
-                artifact_exp_consumed += artifact.Level_Artifact(artifact.artifact_substat_level_increment)
-                lvl += artifact.artifact_substat_level_increment
+            while artifact.get_level() < next_tier:
+                artifact_exp_consumed += artifact.Level_Artifact(artifact.get_substat_level_increment())
+                lvl += artifact.get_substat_level_increment()
                 if not c.artifact_is_valid(artifact, lvl, g):
                     artifact.print()
 
@@ -277,9 +295,9 @@ for i in range(trials):
                     artifact.print()
                     pass
     
-                if artifact.artifact_level == g.artifact_max_level:
-                    slot_counter[artifact.artifact_type] += 1
-                    artifacts_by_starting_lines[artifact.artifact_starting_lines] += 1
+                if artifact.get_level() == artifact.get_max_level():
+                    slot_counter[artifact.get_slot()] += 1
+                    artifacts_by_starting_lines[artifact.get_n_starting_lines()] += 1
                     break
 
         else:
