@@ -221,7 +221,7 @@ nSuccess_T0 = 0
 nSuccess_T1 = 0
 nSuccess_T2 = 0
 debug = False
-trials = 10
+trials = 1000
 slot_counter = {
     'flower': 0,
     'feather': 0,
@@ -232,6 +232,10 @@ slot_counter = {
 
 artifact_exp_consumed = 0
 artifact_exp_gained = 0
+artifacts_by_starting_lines = {
+    3: 0,
+    4: 0,    
+}
 
 # Generate Random Artifact
 artifact = Artifact(artifact_max_level=g.artifact_max_level, artifact_substat_level_increment=g.artifact_substat_level_increment)
@@ -299,6 +303,7 @@ for i in range(trials):
                     pass
  
                 slot_counter[artifact.artifact_type] += 1
+                artifacts_by_starting_lines[artifact.artifact_starting_lines] += 1
             
             else:
                 artifact_exp_gained += artifact.fodder()
@@ -327,5 +332,8 @@ print('Artifact Exp Gained (5stars only): %i' % artifact_exp_gained)
 print('Non 5 Star Exp Gained: %i' % non_5star_exp_gained)
 print('Total Exp Gained: %i' % (non_5star_exp_gained + artifact_exp_gained))
 print('Exp Surplus: %i' % exp_surplus)
-print('Exp lost from foddering Lvl_0: %i' % ((trials-nSuccess_T0)*g.base_exp_gain['5*']))
+print('Exp lost if foddering Lvl_0: %i' % ((trials-nSuccess_T0)*g.base_exp_gain['5*']))
+print('')
+print('L20 Artifacts Summary: ')
+print(artifacts_by_starting_lines)
 print(slot_counter)
