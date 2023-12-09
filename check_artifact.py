@@ -78,12 +78,13 @@ def verify_artifact_fodder_exp_return(artifact, level, game):
     return True
 
 def artifact_is_valid(artifact, level, game):
-    state = True
-    state = state and check_n_substat_lines_is_valid(artifact)
-    state = state and check_substats_exclude_mainstat(artifact)
-    state = state and check_roll_count_at_level_is_valid(artifact, level)
-    state = state and verify_artifact_level(artifact, level)
-    state = state and verify_artifact_exp(artifact, level, game)
+    state = (
+        check_n_substat_lines_is_valid(artifact) and
+        check_substats_exclude_mainstat(artifact) and 
+        check_roll_count_at_level_is_valid(artifact, level) and
+        verify_artifact_level(artifact, level) and 
+        verify_artifact_exp(artifact, level, game)
+    )
 
     return state
 
