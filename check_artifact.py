@@ -14,39 +14,14 @@ def check_substats_exclude_mainstat(artifact):
 
     return True
 
-def check_roll_count_at_level_is_valid(artifact, level):
-    rolls_by_level = {
-        '0': {
-            '3': 3,
-            '4': 4,             
-        },
-        '4': {
-            '3': 4,
-            '4': 5,             
-        },
-        '8': {
-            '3': 5,
-            '4': 6,             
-        },
-        '12': {
-            '3': 6,
-            '4': 7,             
-        },
-        '16': {
-            '3': 7,
-            '4': 8,             
-        },
-        '20': {
-            '3': 8,
-            '4': 9,             
-        },
-    }
-
+def check_roll_count_at_level_is_valid(artifact, level, game):
+    rolls_by_level = game.rolls_by_level
+    
     roll_count = 0
     for substat in artifact.artifact_substats:
         roll_count += artifact.artifact_substats[substat]['rollCount']
 
-    if roll_count > rolls_by_level[str(level)]['4']:
+    if roll_count > rolls_by_level[level][artifact.get_n_starting_lines()]:
         print('Too many rolls: %i' % roll_count)
         return False
 
@@ -81,7 +56,7 @@ def artifact_is_valid(artifact, level, game):
     state = (
         check_n_substat_lines_is_valid(artifact) and
         check_substats_exclude_mainstat(artifact) and 
-        check_roll_count_at_level_is_valid(artifact, level) and
+        check_roll_count_at_level_is_valid(artifact, level, game) and
         verify_artifact_level(artifact, level) and 
         verify_artifact_exp(artifact, level, game)
     )

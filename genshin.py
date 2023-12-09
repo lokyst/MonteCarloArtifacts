@@ -79,6 +79,33 @@ base_exp_gain = {
     '5*': 3780,
 }
 
+rolls_by_level = {
+    0: {
+        3: 3,
+        4: 4,             
+    },
+    4: {
+        3: 4,
+        4: 5,             
+    },
+    8: {
+        3: 5,
+        4: 6,             
+    },
+    12: {
+        3: 6,
+        4: 7,             
+    },
+    16: {
+        3: 7,
+        4: 8,             
+    },
+    20: {
+        3: 8,
+        4: 9,             
+    },
+}
+
 artifact_max_level = 20
 artifact_substat_level_increment = 4
 artifact_max_lines = 4
