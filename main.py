@@ -223,7 +223,7 @@ nSuccess_T0 = 0
 nSuccess_T1 = 0
 nSuccess_T2 = 0
 debug = False
-trials = 10
+trials = 1000
 slot_counter = {
     'flower': 0,
     'feather': 0,
@@ -251,75 +251,60 @@ for i in range(trials):
         #artifact.Generate_Substats()
         artifact.print()
         pass
-    lvl_start = 0
-    lvl_end = 0
 
     if not c.artifact_is_valid(artifact, 0, g):
         artifact.print()
 
+    # Lvl0 Filter
     if f.Keep_Artifact(artifact, g.filters_T0, g.filters_exclude, debug):
         nSuccess_T0 += 1
 
         # +4
-        artifact.Level_Artifact(artifact.artifact_substat_level_increment)
-        lvl_end = lvl_start + artifact.artifact_substat_level_increment
-        artifact_exp_consumed += sum(artifact_exp_by_level[lvl_start:lvl_end])
+        artifact_exp_consumed += artifact.Level_Artifact(artifact.artifact_substat_level_increment)
+        if not c.artifact_is_valid(artifact, 4, g):
+            artifact.print()
+
         if debug:
             artifact.print()
             print('exp required: %s' % artifact_exp_consumed)
             pass
-        lvl_start = lvl_end
 
-        if not c.artifact_is_valid(artifact, 4, g):
-            artifact.print()
-
+        # Lvl4 Filter
         if f.Keep_Artifact(artifact, g.filters_T1, g.filters_exclude, debug):
             nSuccess_T1 += 1
 
             # +8
-            artifact.Level_Artifact(artifact.artifact_substat_level_increment)
-            lvl_end = lvl_start + artifact.artifact_substat_level_increment
-            artifact_exp_consumed += sum(artifact_exp_by_level[lvl_start:lvl_end])
-            lvl_start = lvl_end
-
+            artifact_exp_consumed += artifact.Level_Artifact(artifact.artifact_substat_level_increment)
             if not c.artifact_is_valid(artifact, 8, g):
                 artifact.print()
 
             # +12
-            artifact.Level_Artifact(artifact.artifact_substat_level_increment)
-            lvl_end = lvl_start + artifact.artifact_substat_level_increment
-            artifact_exp_consumed += sum(artifact_exp_by_level[lvl_start:lvl_end])
+            artifact_exp_consumed += artifact.Level_Artifact(artifact.artifact_substat_level_increment)
+            if not c.artifact_is_valid(artifact, 12, g):
+                artifact.print()
+
             if debug:
                 artifact.print()
                 print('exp required: %s' % artifact_exp_consumed)
                 pass
-            lvl_start = lvl_end
 
-            if not c.artifact_is_valid(artifact, 12, g):
-                artifact.print()
-
+            # Lvl12 Filter
             if f.Keep_Artifact(artifact, g.filters_T2, [], debug):
                 nSuccess_T2 += 1
 
                 # +16
-                artifact.Level_Artifact(artifact.artifact_substat_level_increment)
-                lvl_end = lvl_start + artifact.artifact_substat_level_increment
-                artifact_exp_consumed += sum(artifact_exp_by_level[lvl_start:lvl_end])
-                lvl_start = lvl_end
+                artifact_exp_consumed += artifact.Level_Artifact(artifact.artifact_substat_level_increment)
 
                 # +20
-                artifact.Level_Artifact(artifact.artifact_substat_level_increment)
-                lvl_end = lvl_start + artifact.artifact_substat_level_increment
-                artifact_exp_consumed += sum(artifact_exp_by_level[lvl_start:lvl_end])
+                artifact_exp_consumed += artifact.Level_Artifact(artifact.artifact_substat_level_increment)
+                if not c.artifact_is_valid(artifact, 20, g):
+                    artifact.print()
+
                 if debug:
                     artifact.print()
                     print('exp required: %s' % artifact_exp_consumed)
                     pass
-                lvl_start = lvl_end
-
-                if not c.artifact_is_valid(artifact, 20, g):
-                    artifact.print()
-
+ 
                 slot_counter[artifact.artifact_type] += 1
             
             else:
@@ -351,5 +336,5 @@ print('Artifact Exp Gained (5stars only): %i' % artifact_exp_gained)
 print('Non 5 Star Exp Gained: %i' % non_5star_exp_gained)
 print('Total Exp Gained: %i' % (non_5star_exp_gained + artifact_exp_gained))
 print('Exp Surplus: %i' % exp_surplus)
-print('Exp lost from foddering Lvl_0: %i' % ((trials-nSuccess_T0)*T0_exp_gained))
+print('Exp lost from foddering Lvl_0: %i' % ((trials-nSuccess_T0)*g.base_exp_gain['5*']))
 print(slot_counter)
