@@ -1,7 +1,7 @@
 from numpy.random import choice
 import copy
 import contextlib
-import hsr as g
+import genshin as g
 import filter as f
 import check_artifact as c
 
@@ -233,7 +233,7 @@ class Artifact:
 # Simulation
 ##########################################
 debug = False
-trials = 10
+trials = 1000
 
 # Initialize counters
 successes_by_tier = {}
@@ -320,6 +320,6 @@ tier = 0
 print('Exp lost if foddering Lvl_%i: %i' % (tier, (trials-successes_by_tier[tier])*g.base_exp_gain['5*']))
 
 print('')
-print('L20 Artifacts Summary: ')
+print('L%i Artifacts Summary: ' % g.artifact_max_level)
 print(artifacts_by_starting_lines)
 print(slot_counter)
