@@ -173,8 +173,8 @@ From <https://www.reddit.com/r/GenshinImpactTips/comments/xwbvrb/guide_to_choose
 
 # Filters at +0
 filters = {}
-filters.update({0: [
-    {
+filters.update({0: {
+    0: {
         # 0. Keep any artifact with CR && CD
         'f': f.Artifact_Accept_Filter,
         'p': {
@@ -187,7 +187,7 @@ filters.update({0: [
             'substat_matches': 2,
         }
     },
-    {
+    1: {
         # 1. Keep any circlet, sands, or goblet with mainstat em
         'f': f.Artifact_Accept_Filter,
         'p': {
@@ -197,7 +197,7 @@ filters.update({0: [
             'substat_matches': 0,
         },
     },
-    {
+    2: {
         # 2. Keep any circlet with mainstat of either CR || CD
         'f': f.Artifact_Accept_Filter,
         'p': {
@@ -207,7 +207,7 @@ filters.update({0: [
             'substat_matches': 0,
         }
     },
-    {
+    3: {
         # 3. Keep any sands with atkp or er
         'f': f.Artifact_Accept_Filter,
         'p': {
@@ -217,7 +217,7 @@ filters.update({0: [
             'substat_matches': 0,
         },
     },
-    {
+    4: {
         # 4. Keep any goblet with dmgp
         'f': f.Artifact_Accept_Filter,
         'p': {
@@ -227,7 +227,7 @@ filters.update({0: [
             'substat_matches': 0,
         },
     },
-    {
+    5: {
         # 5. Keep any sand, circlet or goblet with hpp, defp, atkp and at least one crit stat
         'f': f.Artifact_Accept_Filter,
         'p': {
@@ -237,7 +237,7 @@ filters.update({0: [
             'substat_matches': 1,
         },
     },
-    {
+    6: {
         # 6. Keep any flower or feather with at least one crit stat
         'f': f.Artifact_Accept_Filter,
         'p': {
@@ -247,7 +247,7 @@ filters.update({0: [
             'substat_matches': 1,
         },
     },
-]})
+}})
 
 # Tighten Filters at +4
 filters.update({4: copy.deepcopy(filters[0])})
@@ -274,16 +274,16 @@ Assuming only CR & CD are desireable:
 '''
 # Rollcount filters
 filters.update({12: copy.deepcopy(filters[0])})
-for filter in filters[12]:
-    filter.update({'f': f.Artifact_Rollcount_Filter})
-    filter['p'].update({'substats': ['cr', 'cd', 'er', 'em', 'atkp']})
+for artifact_filter in filters[12].values():
+    artifact_filter['f'] = f.Artifact_Rollcount_Filter
+    artifact_filter['p'].update({'substats': ['cr', 'cd', 'er', 'em', 'atkp']})
     #filter['p'].update({'substats': ['cr', 'cd']})
-    filter['p'].update({'min_roll_count': 5})
+    artifact_filter['p'].update({'min_roll_count': 5})
 
 # Rejection filters
 filters_exclude = {}
-filters_exclude.update({0: [
-    {
+filters_exclude.update({0: {
+    0: {
         # 0. Reject any artifact with two flat stats
         'f': f.Artifact_Reject_Filter,
         'p': {
@@ -297,7 +297,7 @@ filters_exclude.update({0: [
             'substat_matches': 2,
         }
     },
-]})
+}})
 
 filters_exclude.update({4: copy.deepcopy(filters_exclude[0])})
 filters_exclude.update({12: copy.deepcopy(filters_exclude[0])})

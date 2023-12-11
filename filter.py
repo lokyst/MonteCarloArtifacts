@@ -53,7 +53,7 @@ def Keep_Artifact(artifact, inclusion_filters, exclusion_filters, debug=False):
     # Rejection filters will override inclusion
 
     state = False
-    for i in range(len(inclusion_filters)):
+    for i in inclusion_filters.keys():
         if inclusion_filters[i]['f'](artifact, inclusion_filters[i]['p']):
             state = True
             break
@@ -64,7 +64,7 @@ def Keep_Artifact(artifact, inclusion_filters, exclusion_filters, debug=False):
         return state
 
     # Exclusion will always override
-    for j in range(len(exclusion_filters)):
+    for j in exclusion_filters.keys():
         if exclusion_filters[j]['f'](artifact, exclusion_filters[j]['p']):
             state = False
             break
