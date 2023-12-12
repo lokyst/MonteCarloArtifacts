@@ -179,9 +179,9 @@ From <https://www.reddit.com/r/GenshinImpactTips/comments/xwbvrb/guide_to_choose
 # ['hp', 'atk', 'def', 'hpp', 'atkp', 'defp', 'be', 'ehr', 'eres', 'cr', 'cd', 'spd',]
 # Filters at +0
 filters = {}
-filters.update({0: [
-    {
-        # 0. Keep any artifact with CR && CD
+filters.update({0: {
+    '0': {
+        # 0. Keep any artifact with 2 of CR || CD || SPD
         'f': f.Artifact_Accept_Filter,
         'p': {
             'types': ['head', 'hands', 'body', 'feet', 'sphere', 'rope'],
@@ -193,22 +193,62 @@ filters.update({0: [
                 'edmg', 
                 'be', 'err',
             ],
-            'substats': ['cr', 'cd'],
+            'substats': ['cr', 'cd', 'spd'],
             'substat_matches': 2,
         }
     },
-    {
-        # 1. Keep any feet or ropes with mainstat spd or err
+    '1.0': {
+        # 1.0 Keep any feet with mainstat spd
         'f': f.Artifact_Accept_Filter,
         'p': {
-            'types': ['feet', 'rope'],
-            'mainstats': ['spd', 'err'],
-            'substats': ['ehr', 'eres', 'cr', 'cd',],
+            'types': ['feet'],
+            'mainstats': ['spd'],
+            'substats': ['cr', 'cd', 'atkp'],
             'substat_matches': 0,
         },
     },
-    {
-        # 2. Keep any body with mainstat of either CR || CD
+    '1.1': {
+        # 1.1 Keep any feet with mainstat spd
+        'f': f.Artifact_Accept_Filter,
+        'p': {
+            'types': ['feet'],
+            'mainstats': ['spd'],
+            'substats': ['ehr', 'atkp', 'be'],
+            'substat_matches': 0,
+        },
+    },
+    '1.2': {
+        # 1.1 Keep any feet with mainstat spd
+        'f': f.Artifact_Accept_Filter,
+        'p': {
+            'types': ['feet'],
+            'mainstats': ['spd'],
+            'substats': ['eres', 'hpp', 'defp'],
+            'substat_matches': 0,
+        },
+    },
+    '2': {
+        # 2. Keep any ropes with mainstat err
+        'f': f.Artifact_Accept_Filter,
+        'p': {
+            'types': ['rope'],
+            'mainstats': ['err'],
+            'substats': [],
+            'substat_matches': 0,
+        },
+    },
+    '3': {
+        # 3.0 Keep any ropes with mainstat be
+        'f': f.Artifact_Accept_Filter,
+        'p': {
+            'types': ['rope'],
+            'mainstats': ['be'],
+            'substats': ['ehr', 'spd', 'atkp'],
+            'substat_matches': 0,
+        },
+    },
+    '4.0': {
+        # 4.0 Keep any body with mainstat of either CR, CD
         'f': f.Artifact_Accept_Filter,
         'p': {
             'types': ['body'],
@@ -217,8 +257,28 @@ filters.update({0: [
             'substat_matches': 0,
         }
     },
-    {
-        # 3. Keep any feet with atkp
+    '4.1': {
+        # 4.1 Keep any body with mainstat of EHR
+        'f': f.Artifact_Accept_Filter,
+        'p': {
+            'types': ['body'],
+            'mainstats': ['ehr'],
+            'substats': ['spd', 'atkp', 'be'],
+            'substat_matches': 0,
+        }
+    },
+    '4.2': {
+        # 4.2 Keep any body with mainstat of OHB
+        'f': f.Artifact_Accept_Filter,
+        'p': {
+            'types': ['body'],
+            'mainstats': ['ohb'],
+            'substats': ['spd', 'eres'],
+            'substat_matches': 0,
+        }
+    },
+    '5.0': {
+        # 5.0 Keep any feet with atkp
         'f': f.Artifact_Accept_Filter,
         'p': {
             'types': ['feet'],
@@ -227,8 +287,18 @@ filters.update({0: [
             'substat_matches': 0,
         },
     },
-    {
-        # 4. Keep any sphere with edmg
+    '5.1': {
+        # 5.1 Keep any feet with atkp
+        'f': f.Artifact_Accept_Filter,
+        'p': {
+            'types': ['feet'],
+            'mainstats': ['atkp'],
+            'substats': ['spd', 'ehr', 'be'],
+            'substat_matches': 0,
+        },
+    },
+    '6.0': {
+        # 6.0 Keep any sphere with edmg
         'f': f.Artifact_Accept_Filter,
         'p': {
             'types': ['sphere'],
@@ -237,8 +307,8 @@ filters.update({0: [
             'substat_matches': 0,
         },
     },
-    {
-        # 5. Keep any body, feet, sphere, or rope with hpp, defp, atkp and at least one crit stat or spd stat
+    '7.0': {
+        # 7.0 Keep any body, feet, sphere, or rope with hpp, defp, atkp and at least one crit stat or spd stat
         'f': f.Artifact_Accept_Filter,
         'p': {
             'types': ['body', 'feet', 'sphere', 'rope'],
@@ -247,8 +317,28 @@ filters.update({0: [
             'substat_matches': 1,
         },
     },
-    {
-        # 6. Keep any flower or feather with at least one crit stat or spd stat
+    '7.1': {
+        # 7.1 Keep any body, feet, sphere, or rope with atkp and ehr or spd stat
+        'f': f.Artifact_Accept_Filter,
+        'p': {
+            'types': ['body', 'feet', 'sphere', 'rope'],
+            'mainstats': ['atkp'],
+            'substats': ['spd', 'ehr'],
+            'substat_matches': 1,
+        },
+    },
+    '7.2': {
+        # 7.2 Keep any body, feet, sphere, or rope with hpp or defp and eres or spd stat
+        'f': f.Artifact_Accept_Filter,
+        'p': {
+            'types': ['body', 'feet', 'sphere', 'rope'],
+            'mainstats': ['hpp', 'defp'],
+            'substats': ['spd', 'eres'],
+            'substat_matches': 1,
+        },
+    },
+    '8.0': {
+        # 8.0 Keep any hat or hands with at least one crit stat or spd stat
         'f': f.Artifact_Accept_Filter,
         'p': {
             'types': ['head', 'hands'],
@@ -257,24 +347,55 @@ filters.update({0: [
             'substat_matches': 1,
         },
     },
-]})
+    '8.1': {
+        # 8.1 Keep any hat or hands  with spd or ehr
+        'f': f.Artifact_Accept_Filter,
+        'p': {
+            'types': ['head', 'hands'],
+            'mainstats': ['hp', 'atk'],
+            'substats': ['spd', 'ehr'],
+            'substat_matches': 1,
+        },
+    },
+    '8.2': {
+        # 8.2 Keep any hat or hands with spd or eres
+        'f': f.Artifact_Accept_Filter,
+        'p': {
+            'types': ['head', 'hands'],
+            'mainstats': ['hp', 'atk'],
+            'substats': ['spd', 'eres'],
+            'substat_matches': 1,
+        },
+    },
+}})
 
-# Tighten Filters at +3
+# Tighten Filters at +3 except 0, 1, 2 
 filters.update({3: copy.deepcopy(filters[0])})
-# 0. No change. Let's see if we get lucky at +8
-# 1. No change. EM is a rare mainstat and chars built around EM often do not care about other stats
-# 2. No change. CR and CD are rare main stats.
-# 3. Keep any sands with atkp or er and at least 1 desireable stat
-filters[3][3]['p']['substat_matches'] = 1
-# 4. Keep any goblet with dmgp and at least 1 crit stat
-filters[3][4]['p']['substats'] = ['cr', 'cd']
-filters[3][4]['p']['substat_matches'] = 1
+for artifact_filter in filters[3].values():
+    artifact_filter['p']['substat_matches'] += 1
+# Revert 0, 1, 2
+filters[3]['0']['p']['substat_matches'] = 0    # 2 of CR | CD | SPD
+filters[3]['2']['p']['substat_matches'] = 0    # ERR rope
+
+# 1. No change. ERR/BE/SPD is a rare mainstat and chars built around ERR often do not care about other stats
+# 2. No change. CR, CD and EHR are rare main stats.
+# 3. Keep any feet with atkp and at least 1 desireable stat
+#filters[3][3]['p']['substat_matches'] = 1
+# 4. Keep any goblet with dmgp and at least 1 crit stat or spd
+#filters[3][4]['p']['substat_matches'] = 1
 # 5. Keep any sand, circlet or goblet with hpp, defp, atkp and CR && CD
-filters[3][6]['p']['substats'] = ['cr', 'cd']
-filters[3][5]['p']['substat_matches'] = 2
+#filters[3][5]['p']['substat_matches'] = 2
 # 6. Keep any flower or feather with CR && CD
-filters[3][6]['p']['substats'] = ['cr', 'cd']
-filters[3][6]['p']['substat_matches'] = 2
+#filters[3][6]['p']['substats'] = ['cr', 'cd', 'spd']
+#filters[3][6]['p']['substat_matches'] = 2
+# 9. Atk% body or feet with 2 of spd/ehr/be at 3
+#10. hp or def body or feet with 2 of spd/eres at 3
+#11. ohb with 1 of spd or eres
+#13. Orbs 1 of spd/cr/cd (eres not reqd since it's for a specific planar orb  set)
+#14. HP ATK DEF rope 2 of spd/cr/cd
+#15. BE rope 1 of spd/cr/cd/ehr/atk
+
+
 
 '''
 Assuming only CR & CD are desireable:
@@ -284,16 +405,22 @@ Assuming only CR & CD are desireable:
 '''
 # Rollcount filters
 filters.update({9: copy.deepcopy(filters[0])})
-for filter in filters[9]:
-    filter.update({'f': f.Artifact_Rollcount_Filter})
-    filter['p'].update({'substats': ['cr', 'cd', 'spd', 'atkp']})
-    #filter['p'].update({'substats': ['cr', 'cd']})
-    filter['p'].update({'min_roll_count': 5})
+for artifact_filter in filters[9].values():
+    artifact_filter.update({'f': f.Artifact_Rollcount_Filter})
+    artifact_filter['p'].update({'min_roll_count': 5})
+
+# Exceptions and extensions
+filters[9]['2']['p']['substats'] = ['spd', 'eres', 'ehr', 'cr', 'cd'] # ERR rope
+filters[9]['4.2']['p']['substats'] = ['spd', 'eres', 'hpp']  # OHB body
+filters[9]['6.0']['p']['substats'] = ['cr', 'cd', 'spd', 'atkp']  # EDMG sphere
+filters[9]['7.1']['p']['substats'] = ['spd', 'ehr', 'be']  # ATKP body/feet/sphere/rope
+filters[9]['7.2']['p']['substats'] = ['spd', 'eres', 'hpp']  # HPP/DEFP body/feet/sphere/rope
+filters[9]['8.2']['p']['substats'] = ['spd', 'eres', 'hpp']  # hat/hands
 
 # Rejection filters
 filters_exclude = {}
-filters_exclude.update({0: [
-    {
+filters_exclude.update({0: {
+    0: {
         # 0. Reject any artifact with two flat stats
         'f': f.Artifact_Reject_Filter,
         'p': {
@@ -311,7 +438,7 @@ filters_exclude.update({0: [
             'substat_matches': 2,
         }
     },
-]})
+}})
 
 filters_exclude.update({3: copy.deepcopy(filters_exclude[0])})
 filters_exclude.update({9: copy.deepcopy(filters_exclude[0])})
