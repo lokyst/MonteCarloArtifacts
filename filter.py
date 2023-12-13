@@ -76,3 +76,14 @@ def Keep_Artifact(artifact, inclusion_filters, exclusion_filters, debug=False):
             print('Rejected: Rule %i' % j)
 
     return state
+
+def print_filter(fltr):
+    if 'desc' in fltr:
+        print(fltr['desc'])
+    else:
+        print('*** ', fltr['p'])
+
+def print_filters(filters):
+    for fltr in filters.values():
+        print_filter(fltr)
+            
