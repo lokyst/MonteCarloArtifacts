@@ -259,10 +259,10 @@ filters[4][3]['p']['substat_matches'] = 1
 # 4. Keep any goblet with dmgp and at least 1 crit stat
 filters[4][4]['p']['substats'] = ['cr', 'cd']
 filters[4][4]['p']['substat_matches'] = 1
-# 5. Keep any sand, circlet or goblet with hpp, defp, atkp and CR && CD
-filters[4][6]['p']['substats'] = ['cr', 'cd']
+# 5. Keep any sand, circlet or goblet with hpp, defp, atkp and 2 rolls into CR or CD
+filters[4][5]['p']['substats'] = ['cr', 'cd']
 filters[4][5]['p']['substat_matches'] = 2
-# 6. Keep any flower or feather with CR && CD
+# 6. Keep any flower or feather with 2 rolls into CR or CD
 filters[4][6]['p']['substats'] = ['cr', 'cd']
 filters[4][6]['p']['substat_matches'] = 2
 
