@@ -318,7 +318,6 @@ filters_exclude.update({0: {
             'types': ['sands', 'goblet', 'circlet'],
             'mainstats': ['hpp', 'atkp', 'defp'],
             'substats': ['hp', 'def', 'atk'],
-            'starting_substat_lines': 3,
             'substat_matches': 2,
         }
     },
@@ -330,7 +329,6 @@ filters_exclude.update({0: {
             'types': ['sands', 'circlet'],
             'mainstats': ['er', 'em', 'dmgp', 'cr', 'cd', 'hb'],
             'substats': ['hp', 'def', 'atk'],
-            'starting_substat_lines': 3,
             'substat_matches': 2,
         }
     },
@@ -342,7 +340,6 @@ filters_exclude.update({0: {
             'types': ['goblet'],
             'mainstats': ['er', 'dmgp', 'cr', 'cd', 'hb'],
             'substats': ['hp', 'def', 'atk'],
-            'starting_substat_lines': 3,
             'substat_matches': 2,
         }
     },
