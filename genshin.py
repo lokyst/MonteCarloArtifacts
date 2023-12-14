@@ -266,6 +266,8 @@ filters[4][5]['p']['substat_matches'] = 2
 filters[4][6]['p']['substats'] = ['cr', 'cd']
 filters[4][6]['p']['substat_matches'] = 2
 
+filters.update({8: copy.deepcopy(filters[4])})
+
 '''
 Assuming only CR & CD are desireable:
 - the absolute best we can get at +20 is 6/8 or 7/9
@@ -294,7 +296,7 @@ filters_exclude.update({0: {
             'substat_matches': 2,
         }
     },
-    0: {
+    1: {
         # 0. Reject any hpp, atkp, defp artifact with two flat stats
         'f': f.Artifact_Reject_Filter,
         'p': {
@@ -305,7 +307,7 @@ filters_exclude.update({0: {
             'substat_matches': 2,
         }
     },
-    0: {
+    2: {
         # 0. Reject any sands, goblet, circlet with 2 flat stats
         'f': f.Artifact_Reject_Filter,
         'p': {
@@ -316,7 +318,7 @@ filters_exclude.update({0: {
             'substat_matches': 2,
         }
     },
-    0: {
+    3: {
         # 0. Reject any goblet with 2 flat stats except em
         'f': f.Artifact_Reject_Filter,
         'p': {
@@ -327,9 +329,24 @@ filters_exclude.update({0: {
             'substat_matches': 2,
         }
     },
+    4: {
+        # 0. Reject any goblet with 2 flat stats except em
+        'f': f.Artifact_Reject_Rollcount_Early_Filter,
+        'p': {
+            'types': ['flower', 'feather', 'sands', 'goblet', 'circlet'],
+            'mainstats': [
+                'hp', 'atk', 'def', 'hpp', 'atkp', 'defp', 'er', 'em', 'cr',
+                'cd', 'dmgp', 'hb'
+            ],
+            'substats': ['cr', 'cd', 'er', 'em', 'atkp'],
+            'target_level': 12,
+            'min_roll_count': 5,
+        }
+    },
 }})
 
 filters_exclude.update({4: copy.deepcopy(filters_exclude[0])})
+filters_exclude.update({8: copy.deepcopy(filters_exclude[0])})
 filters_exclude.update({12: copy.deepcopy(filters_exclude[0])})
 
 #filters_exclude = []
