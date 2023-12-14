@@ -79,9 +79,13 @@ def Keep_Artifact(artifact, inclusion_filters, exclusion_filters, debug=False):
     # Rejection filters will override inclusion
 
     state = False
-    for i in inclusion_filters.keys():
+    description = ''
+    for i in inclusion_filters:
         if inclusion_filters[i]['f'](artifact, inclusion_filters[i]['p']):
             state = True
+            description = 'Accepted: Rule ' + str(i)
+            with contextlib.suppress(KeyError):
+                description = description + ' - ' + inclusion_filters[i]['desc']
             break
 
     if not state:
@@ -90,16 +94,16 @@ def Keep_Artifact(artifact, inclusion_filters, exclusion_filters, debug=False):
         return state
 
     # Exclusion will always override
-    for j in exclusion_filters.keys():
+    for j in exclusion_filters:
         if exclusion_filters[j]['f'](artifact, exclusion_filters[j]['p']):
             state = False
+            description = 'Rejected: Rule ' + str(j)
+            with contextlib.suppress(KeyError):
+                description = description + ' - ' + exclusion_filters[j]['desc']
             break
 
     if debug:
-        if state:
-            print('Accepted: Rule %i' % i)
-        else: 
-            print('Rejected: Rule %i' % j)
+        print(description)
 
     return state
 
