@@ -1,7 +1,7 @@
 from numpy.random import choice
 import copy
 import contextlib
-import hsr as g
+import genshin as g
 import filter as f
 import check_artifact as c
 
@@ -226,6 +226,9 @@ class Artifact:
 
     def get_max_level(self):
         return self.artifact_max_level
+
+    def get_mainstat(self):
+        return self.artifact_mainstat
         
 
 
@@ -241,7 +244,10 @@ for tier in g.tiers:
     successes_by_tier.update({tier: 0})
 slot_counter = {}
 for slot in g.slotType:
-    slot_counter.update({slot: 0})
+    slot_counter.update({slot: {'total': 0}})
+    for mainstat in g.slotInfo[slot]['mainstats']:
+        slot_counter[slot].update({mainstat: 0})
+
 artifact_exp_consumed = 0
 artifact_exp_gained = 0
 artifacts_by_starting_lines = {
@@ -254,6 +260,8 @@ artifact = Artifact(
     artifact_max_level = g.artifact_max_level, 
     artifact_substat_level_increment = g.artifact_substat_level_increment
 )
+
+#f.print_filters(g.filters[0])
 
 for i in range(trials):
     artifact.random()
@@ -292,7 +300,8 @@ for i in range(trials):
                     pass
     
                 if artifact.get_level() == artifact.get_max_level():
-                    slot_counter[artifact.get_slot()] += 1
+                    slot_counter[artifact.get_slot()]['total'] += 1
+                    slot_counter[artifact.get_slot()][artifact.get_mainstat()] += 1
                     artifacts_by_starting_lines[artifact.get_n_starting_lines()] += 1
                     break
 
@@ -322,4 +331,6 @@ print('Exp lost if foddering Lvl_%i: %i' % (tier, (trials-successes_by_tier[tier
 print('')
 print('L%i Artifacts Summary: ' % g.artifact_max_level)
 print(artifacts_by_starting_lines)
-print(slot_counter)
+for slot in slot_counter.keys():
+    print(slot)
+    print(slot_counter[slot])
