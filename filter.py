@@ -28,8 +28,33 @@ def Artifact_Reject_Filter(artifact, filter):
 
     return False
 
-#def Artifact_Three_Line_Filter(artifact, filter):
+def Artifact_Reject_Rollcount_Early_Filter(artifact, filter):
+    # Returns True if artifact will not be able to reach the target substat rolls by 
+    # the target level
+
+    rcnt = 0
+    level_increment = artifact.get_substat_level_increment()
+    current_level = artifact.get_level()
+    target_level = filter['target_level'] or 3*artifact.get_substat_level_increment()
     
+    # Determine how many substat increments are left
+    remaining_substat_increments = (target_level // level_increment - 
+                                    current_level // level_increment)
+
+    # Reduce the rcnt target by the number of the substats remaining
+    target_rcnt = filter['min_roll_count'] - remaining_substat_increments
+
+    # Count number of substat rolls into desired substats
+    for s in filter['substats']:
+        with contextlib.suppress(KeyError):
+            rcnt += artifact.get_substats()[s]['rollCount']
+
+    if (artifact.get_slot() in filter['types'] and 
+        artifact.get_mainstat() in filter['mainstats'] and 
+        rcnt < target_rcnt):
+        return True
+
+    return False
 
 
 def Artifact_Rollcount_Filter(artifact, filter):
@@ -41,8 +66,9 @@ def Artifact_Rollcount_Filter(artifact, filter):
         with contextlib.suppress(KeyError):
             rcnt += artifact.get_substats()[s]['rollCount']
 
-    if artifact.get_slot() in filter['types'] and artifact.get_mainstat() in filter[
-                'mainstats'] and rcnt >= filter['min_roll_count']:
+    if (artifact.get_slot() in filter['types'] and 
+        artifact.get_mainstat() in filter['mainstats'] and 
+        rcnt >= filter['min_roll_count']):
         return True
 
     return False
