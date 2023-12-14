@@ -175,7 +175,8 @@ From <https://www.reddit.com/r/GenshinImpactTips/comments/xwbvrb/guide_to_choose
 filters = {}
 filters.update({0: {
     0: {
-        # 0. Keep any artifact with CR && CD
+        # Keep any artifact with CR && CD
+        'desc': 'Keep any artifact with CR && CD',
         'f': f.Artifact_Accept_Filter,
         'p': {
             'types': ['flower', 'feather', 'sands', 'goblet', 'circlet'],
@@ -188,7 +189,8 @@ filters.update({0: {
         }
     },
     1: {
-        # 1. Keep any circlet, sands, or goblet with mainstat em
+        # Keep any circlet, sands, or goblet with mainstat em
+        'desc': 'Keep any circlet, sands, or goblet with mainstat em',
         'f': f.Artifact_Accept_Filter,
         'p': {
             'types': ['circlet', 'sands', 'goblet'],
@@ -198,7 +200,8 @@ filters.update({0: {
         },
     },
     2: {
-        # 2. Keep any circlet with mainstat of either CR || CD
+        # Keep any circlet with mainstat of either CR || CD
+        'desc': 'Keep any circlet with mainstat of either CR || CD',
         'f': f.Artifact_Accept_Filter,
         'p': {
             'types': ['circlet'],
@@ -208,7 +211,8 @@ filters.update({0: {
         }
     },
     3: {
-        # 3. Keep any sands with atkp or er
+        # Keep any sands with atkp or er
+        'desc': 'Keep any sands with atkp or er',
         'f': f.Artifact_Accept_Filter,
         'p': {
             'types': ['sands'],
@@ -218,7 +222,8 @@ filters.update({0: {
         },
     },
     4: {
-        # 4. Keep any goblet with dmgp
+        # Keep any goblet with dmgp
+        'desc': 'Keep any goblet with dmgp',
         'f': f.Artifact_Accept_Filter,
         'p': {
             'types': ['goblet'],
@@ -228,7 +233,8 @@ filters.update({0: {
         },
     },
     5: {
-        # 5. Keep any sand, circlet or goblet with hpp, defp, atkp and at least one crit stat
+        # Keep any sand, circlet or goblet with hpp, defp, atkp and at least one crit stat
+        'desc': 'Keep any sand, circlet or goblet with hpp, defp, atkp and at least one crit stat',
         'f': f.Artifact_Accept_Filter,
         'p': {
             'types': ['sands', 'goblet', 'circlet'],
@@ -238,7 +244,8 @@ filters.update({0: {
         },
     },
     6: {
-        # 6. Keep any flower or feather with at least one crit stat
+        # Keep any flower or feather with at least one crit stat
+        'desc': 'Keep any flower or feather with at least one crit stat',
         'f': f.Artifact_Accept_Filter,
         'p': {
             'types': ['flower', 'feather'],
@@ -255,14 +262,18 @@ filters.update({4: copy.deepcopy(filters[0])})
 # 1. No change. EM is a rare mainstat and chars built around EM often do not care about other stats
 # 2. No change. CR and CD are rare main stats.
 # 3. Keep any sands with atkp or er and at least 1 desireable stat
+filters[4][3]['desc'] = filters[4][3]['desc'] + ' and at least 1 desireable stat'
 filters[4][3]['p']['substat_matches'] = 1
 # 4. Keep any goblet with dmgp and at least 1 crit stat
+filters[4][4]['desc'] = filters[4][4]['desc'] + ' and at least 1 crit stat'
 filters[4][4]['p']['substats'] = ['cr', 'cd']
 filters[4][4]['p']['substat_matches'] = 1
-# 5. Keep any sand, circlet or goblet with hpp, defp, atkp and CR && CD
+# 5. Keep any sand, circlet or goblet with hpp, defp, atkp and both CR && CD
+filters[4][5]['desc'] = filters[4][5]['desc'] + ' and both CR && CD'
 filters[4][5]['p']['substats'] = ['cr', 'cd']
 filters[4][5]['p']['substat_matches'] = 2
-# 6. Keep any flower or feather with CR && CD
+# 6. Keep any flower or feather and both CR && CD
+filters[4][6]['desc'] = filters[4][6]['desc'] + ' and both CR && CD'
 filters[4][6]['p']['substats'] = ['cr', 'cd']
 filters[4][6]['p']['substat_matches'] = 2
 
@@ -281,12 +292,15 @@ for artifact_filter in filters[12].values():
     artifact_filter['p'].update({'substats': ['cr', 'cd', 'er', 'em', 'atkp']})
     #filter['p'].update({'substats': ['cr', 'cd']})
     artifact_filter['p'].update({'min_roll_count': 5})
+    artifact_filter['desc'] = (artifact_filter['desc'] + ' and rollcount >= ' + 
+                               str(artifact_filter['p']['min_roll_count']))
 
 # Rejection filters
 filters_exclude = {}
 filters_exclude.update({0: {
     0: {
-        # 0. Reject any flower or feather with two flat stats
+        # Reject any flower or feather with two flat stats
+        'desc': 'Reject any flower or feather with two flat stats',
         'f': f.Artifact_Reject_Filter,
         'p': {
             'types': ['flower', 'feather'],
@@ -297,7 +311,8 @@ filters_exclude.update({0: {
         }
     },
     1: {
-        # 0. Reject any hpp, atkp, defp artifact with two flat stats
+        # Reject any hpp, atkp, defp artifact with two flat stats
+        'desc': 'Reject any hpp, atkp, defp artifact with two flat stats',
         'f': f.Artifact_Reject_Filter,
         'p': {
             'types': ['sands', 'goblet', 'circlet'],
@@ -308,7 +323,8 @@ filters_exclude.update({0: {
         }
     },
     2: {
-        # 0. Reject any sands, goblet, circlet with 2 flat stats
+        # Reject any sands or circlet with two flat stats
+        'desc': 'Reject any sands or circlet with two flat stats',
         'f': f.Artifact_Reject_Filter,
         'p': {
             'types': ['sands', 'circlet'],
@@ -319,18 +335,20 @@ filters_exclude.update({0: {
         }
     },
     3: {
-        # 0. Reject any goblet with 2 flat stats except em
+        # Reject any goblet with 2 flat stats except em
+        'desc': 'Reject any goblet with 2 flat stats except em',
         'f': f.Artifact_Reject_Filter,
         'p': {
             'types': ['goblet'],
-            'mainstats': ['er', 'em', 'dmgp', 'cr', 'cd', 'hb'],
+            'mainstats': ['er', 'dmgp', 'cr', 'cd', 'hb'],
             'substats': ['hp', 'def', 'atk'],
             'starting_substat_lines': 3,
             'substat_matches': 2,
         }
     },
     4: {
-        # 0. Reject any goblet with 2 flat stats except em
+        # Reject if unable to meet roll count by +12
+        'desc': 'Reject if unable to meet roll count by +12',
         'f': f.Artifact_Reject_Rollcount_Early_Filter,
         'p': {
             'types': ['flower', 'feather', 'sands', 'goblet', 'circlet'],
