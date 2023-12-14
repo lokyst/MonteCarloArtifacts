@@ -9,8 +9,7 @@ def Artifact_Accept_Filter(artifact, filter):
     s_isect = set(filter['substats']).intersection(
         set(artifact.get_substat_list()))
 
-    if artifact.artifact_type in filter[
-            'types'] and artifact.artifact_mainstat in filter[
+    if artifact.get_slot() in filter['types'] and artifact.get_mainstat() in filter[
                 'mainstats'] and len(s_isect) >= filter['substat_matches']:
         return True
 
@@ -23,12 +22,14 @@ def Artifact_Reject_Filter(artifact, filter):
     s_isect = set(filter['substats']).intersection(
         set(artifact.get_substat_list()))
 
-    if artifact.artifact_type in filter[
-            'types'] and artifact.artifact_mainstat in filter[
+    if artifact.get_slot() in filter['types'] and artifact.get_mainstat() in filter[
                 'mainstats'] and len(s_isect) >= filter['substat_matches']:
         return True
 
     return False
+
+#def Artifact_Three_Line_Filter(artifact, filter):
+    
 
 
 def Artifact_Rollcount_Filter(artifact, filter):
@@ -38,10 +39,9 @@ def Artifact_Rollcount_Filter(artifact, filter):
 
     for s in filter['substats']:
         with contextlib.suppress(KeyError):
-            rcnt += artifact.artifact_substats[s]['rollCount']
+            rcnt += artifact.get_substats()[s]['rollCount']
 
-    if artifact.artifact_type in filter[
-            'types'] and artifact.artifact_mainstat in filter[
+    if artifact.get_slot() in filter['types'] and artifact.get_mainstat() in filter[
                 'mainstats'] and rcnt >= filter['min_roll_count']:
         return True
 

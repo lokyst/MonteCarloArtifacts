@@ -229,6 +229,9 @@ class Artifact:
 
     def get_mainstat(self):
         return self.artifact_mainstat
+
+    def get_substats(self):
+        return self.artifact_substats
         
 
 
@@ -236,7 +239,7 @@ class Artifact:
 # Simulation
 ##########################################
 debug = False
-trials = 10000
+trials = 1000
 
 # Initialize counters
 successes_by_tier = {}
