@@ -259,10 +259,10 @@ filters[4][3]['p']['substat_matches'] = 1
 # 4. Keep any goblet with dmgp and at least 1 crit stat
 filters[4][4]['p']['substats'] = ['cr', 'cd']
 filters[4][4]['p']['substat_matches'] = 1
-# 5. Keep any sand, circlet or goblet with hpp, defp, atkp and 2 rolls into CR or CD
+# 5. Keep any sand, circlet or goblet with hpp, defp, atkp and CR && CD
 filters[4][5]['p']['substats'] = ['cr', 'cd']
 filters[4][5]['p']['substat_matches'] = 2
-# 6. Keep any flower or feather with 2 rolls into CR or CD
+# 6. Keep any flower or feather with CR && CD
 filters[4][6]['p']['substats'] = ['cr', 'cd']
 filters[4][6]['p']['substat_matches'] = 2
 
@@ -284,14 +284,44 @@ for artifact_filter in filters[12].values():
 filters_exclude = {}
 filters_exclude.update({0: {
     0: {
-        # 0. Reject any artifact with two flat stats
+        # 0. Reject any flower or feather with two flat stats
         'f': f.Artifact_Reject_Filter,
         'p': {
-            'types': ['flower', 'feather', 'sands', 'goblet', 'circlet'],
-            'mainstats': [
-                'hp', 'atk', 'def', 'hpp', 'atkp', 'defp', 'er', 'em', 'cr',
-                'cd', 'dmgp', 'hb'
-            ],
+            'types': ['flower', 'feather'],
+            'mainstats': ['hp', 'atk'],
+            'substats': ['hp', 'def', 'atk'],
+            'starting_substat_lines': 3,
+            'substat_matches': 2,
+        }
+    },
+    0: {
+        # 0. Reject any hpp, atkp, defp artifact with two flat stats
+        'f': f.Artifact_Reject_Filter,
+        'p': {
+            'types': ['sands', 'goblet', 'circlet'],
+            'mainstats': ['hpp', 'atkp', 'defp'],
+            'substats': ['hp', 'def', 'atk'],
+            'starting_substat_lines': 3,
+            'substat_matches': 2,
+        }
+    },
+    0: {
+        # 0. Reject any sands, goblet, circlet with 2 flat stats
+        'f': f.Artifact_Reject_Filter,
+        'p': {
+            'types': ['sands', 'circlet'],
+            'mainstats': ['er', 'em', 'dmgp', 'cr', 'cd', 'hb'],
+            'substats': ['hp', 'def', 'atk'],
+            'starting_substat_lines': 3,
+            'substat_matches': 2,
+        }
+    },
+    0: {
+        # 0. Reject any goblet with 2 flat stats except em
+        'f': f.Artifact_Reject_Filter,
+        'p': {
+            'types': ['goblet'],
+            'mainstats': ['er', 'em', 'dmgp', 'cr', 'cd', 'hb'],
             'substats': ['hp', 'def', 'atk'],
             'starting_substat_lines': 3,
             'substat_matches': 2,
