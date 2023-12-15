@@ -6,6 +6,9 @@ import contextlib
 def Artifact_Accept_Filter(artifact, filter):
     # Returns True if artifact matches filter
 
+    if len(filter['substats']) == 0:
+        return True
+
     s_isect = set(filter['substats']).intersection(
         set(artifact.get_substat_list()))
 
@@ -59,6 +62,9 @@ def Artifact_Reject_Rollcount_Early_Filter(artifact, filter):
 
 def Artifact_Rollcount_Filter(artifact, filter):
     # Returns True if total roll count for specified stats meets or exceeds minimum
+
+    if len(filter['substats']) == 0:
+        return True
 
     rcnt = 0
 
