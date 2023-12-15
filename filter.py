@@ -6,14 +6,17 @@ import contextlib
 def Artifact_Accept_Filter(artifact, filter):
     # Returns True if artifact matches filter
 
-    if len(filter['substats']) == 0:
+    if (artifact.get_slot() in filter['types'] and 
+        artifact.get_mainstat() in filter['mainstats'] and 
+        len(filter['substats']) == 0):
         return True
 
     s_isect = set(filter['substats']).intersection(
         set(artifact.get_substat_list()))
 
-    if artifact.get_slot() in filter['types'] and artifact.get_mainstat() in filter[
-                'mainstats'] and len(s_isect) >= filter['substat_matches']:
+    if (artifact.get_slot() in filter['types'] and 
+        artifact.get_mainstat() in filter['mainstats'] and 
+        len(s_isect) >= filter['substat_matches']):
         return True
 
     return False
@@ -63,7 +66,9 @@ def Artifact_Reject_Rollcount_Early_Filter(artifact, filter):
 def Artifact_Rollcount_Filter(artifact, filter):
     # Returns True if total roll count for specified stats meets or exceeds minimum
 
-    if len(filter['substats']) == 0:
+    if (artifact.get_slot() in filter['types'] and 
+        artifact.get_mainstat() in filter['mainstats'] and 
+        len(filter['substats']) == 0):
         return True
 
     rcnt = 0
