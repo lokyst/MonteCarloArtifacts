@@ -534,17 +534,63 @@ filters_exclude.update({0: {
             'min_roll_count': 5,
         }
     },
-    # 5: {
-    #     'f': f.OneOf,
-    #     'p': {
-    #         'fs': [
-    #             {
-    #                 'f': f.TestSomething,
-    #                 'p': {],
-    #             },
-    #         ],
-    #     }
-    # }
+    5: {
+        # Reject if no dmg/dbf/sup subsets will meet roll count by +9 
+        'desc': 'Reject if no dmg/dbf/sup subsets will meet roll count by +9',
+        'f': f.All_Of,
+        'p': {
+            'fs': [
+                {
+                    'f': f.Artifact_Reject_Rollcount_Early_Filter,
+                    'p': {
+                        'types': ['head', 'hands', 'body', 'feet', 'sphere', 'rope'],
+                        'mainstats': [
+                            'hp', 'atk', 
+                            'hpp', 'atkp', 'defp', 
+                            'ehr', 'ohb', 'cr', 'cd', 
+                            'edmg', 
+                            'be',
+                            ],
+                        'substats': ['cr', 'cd', 'spd', 'atkp'],
+                        'target_level': 9,
+                        'min_roll_count': 5,
+                    }
+                },
+                {
+                    'f': f.Artifact_Reject_Rollcount_Early_Filter,
+                    'p': {
+                        'types': ['head', 'hands', 'body', 'feet', 'sphere', 'rope'],
+                        'mainstats': [
+                            'hp', 'atk', 
+                            'hpp', 'atkp', 'defp', 
+                            'ehr', 'ohb', 'cr', 'cd', 
+                            'edmg', 
+                            'be',
+                            ],
+                        'substats': ['spd', 'atkp', 'ehr', 'be'],
+                        'target_level': 9,
+                        'min_roll_count': 5,
+                    }
+                },
+                {
+                    'f': f.Artifact_Reject_Rollcount_Early_Filter,
+                    'p': {
+                        'types': ['head', 'hands', 'body', 'feet', 'sphere', 'rope'],
+                        'mainstats': [
+                            'hp', 'atk', 
+                            'hpp', 'atkp', 'defp', 
+                            'ehr', 'ohb', 'cr', 'cd', 
+                            'edmg', 
+                            'be',
+                            ],
+                        'substats': ['spd', 'eres', 'hpp'],
+                        'target_level': 9,
+                        'min_roll_count': 5,
+                    }
+                },
+            ],
+        }
+    }
 }})
 
 filters_exclude.update({3: copy.deepcopy(filters_exclude[0])})
