@@ -1,7 +1,7 @@
 from numpy.random import choice
 import copy
 import contextlib
-import genshin as g
+import hsr as g
 import filter as f
 import check_artifact as c
 
@@ -238,8 +238,8 @@ class Artifact:
 ##########################################
 # Simulation
 ##########################################
-debug = False
-trials = 1000
+debug = True
+trials = 1
 
 # Initialize counters
 successes_by_tier = {}
@@ -269,8 +269,9 @@ artifact = Artifact(
 for i in range(trials):
     artifact.random()
     if debug:
-        #artifact = Artifact('goblet', None, 'dmgp', ['cr', 'hpp', 'def'])
-        #artifact.Generate_Substats()
+        # artifact = Artifact('goblet', None, 'dmgp', ['cr', 'hpp', 'er'])
+        # artifact = Artifact('head', None, 'hp', ['atkp', 'cd', 'hpp'])
+        # artifact.Generate_Substats()
         print('')
         artifact.print()
         pass

@@ -196,39 +196,45 @@ filters.update({0: {
             ],
             'substats': ['cr', 'cd', 'spd'],
             'substat_matches': 2,
-        }
-    },
-    '1.0': {
-        # Keep any feet with mainstat spd (dmg)
-        'desc': 'Keep any feet with mainstat spd',
-        'f': f.Artifact_Accept_Filter,
-        'p': {
-            'types': ['feet'],
-            'mainstats': ['spd'],
-            'substats': ['cr', 'cd', 'atkp'],
-            'substat_matches': 0,
         },
     },
-    '1.1': {
-        # Keep any feet with mainstat spd (debuff)
-        'desc': 'Keep any feet with mainstat spd',
-        'f': f.Artifact_Accept_Filter,
+    '1': {
+        # Keep any feet with mainstat spd matching dmg/dbf/sup template
+        'desc': 'Keep any feet with mainstat spd matching dmg/dbf/sup template',
+        'f': f.Any_Of,
         'p': {
-            'types': ['feet'],
-            'mainstats': ['spd'],
-            'substats': ['ehr', 'atkp', 'be'],
-            'substat_matches': 0,
-        },
-    },
-    '1.2': {
-        # Keep any feet with mainstat spd (supp)
-        'desc': 'Keep any feet with mainstat spd',
-        'f': f.Artifact_Accept_Filter,
-        'p': {
-            'types': ['feet'],
-            'mainstats': ['spd'],
-            'substats': ['eres', 'hpp', 'defp'],
-            'substat_matches': 0,
+            'fs': [
+                {
+                    'desc': '(dmg)',
+                    'f': f.Artifact_Accept_Filter,
+                    'p': {
+                        'types': ['feet'],
+                        'mainstats': ['spd'],
+                        'substats': ['cr', 'cd', 'atkp'],
+                        'substat_matches': 0,
+                    },
+                },
+                {
+                    'desc': '(dbf)',
+                    'f': f.Artifact_Accept_Filter,
+                    'p': {
+                        'types': ['feet'],
+                        'mainstats': ['spd'],
+                        'substats': ['ehr', 'atkp', 'be'],
+                        'substat_matches': 0,
+                    },
+                },
+                {
+                    'desc': '(sup)',
+                    'f': f.Artifact_Accept_Filter,
+                    'p': {
+                        'types': ['feet'],
+                        'mainstats': ['spd'],
+                        'substats': ['eres', 'hpp', 'defp'],
+                        'substat_matches': 0,
+                    },
+                },
+            ],
         },
     },
     '2': {
@@ -253,62 +259,73 @@ filters.update({0: {
             'substat_matches': 0,
         },
     },
-    '4.0': {
-        # Keep any body with mainstat of either CR, CD
-        'desc': 'Keep any body with mainstat of either CR, CD',
-        'f': f.Artifact_Accept_Filter,
+    '4': {
+        # Keep any body with mainstat and substats matching dmg/dbf/supp
+        'desc': 'Keep any body with mainstat and substats matching dmg/dbf/supp',
+        'f': f.Any_Of,
         'p': {
-            'types': ['body'],
-            'mainstats': ['cr', 'cd'],
-            'substats': ['cr', 'cd', 'atkp', 'spd'],
-            'substat_matches': 0,
-        }
-    },
-    '4.1': {
-        # Keep any body with mainstat of EHR
-        'desc': 'Keep any body with mainstat of EHR',
-        'f': f.Artifact_Accept_Filter,
-        'p': {
-            'types': ['body'],
-            'mainstats': ['ehr'],
-            'substats': ['spd', 'atkp', 'be'],
-            'substat_matches': 0,
-        }
-    },
-    '4.2': {
-        # Keep any body with mainstat of OHB
-        'desc': 'Keep any body with mainstat of OHB',
-        'f': f.Artifact_Accept_Filter,
-        'p': {
-            'types': ['body'],
-            'mainstats': ['ohb'],
-            'substats': ['spd', 'eres'],
-            'substat_matches': 0,
-        }
-    },
-    '5.0': {
-        # Keep any feet with atkp
-        'desc': 'Keep any feet with atkp',
-        'f': f.Artifact_Accept_Filter,
-        'p': {
-            'types': ['feet'],
-            'mainstats': ['atkp'],
-            'substats': ['cr', 'cd', 'spd'],
-            'substat_matches': 0,
+            'fs': [
+                {
+                    'desc': '(dmg)',
+                    'f': f.Artifact_Accept_Filter,
+                    'p': {
+                        'types': ['body'],
+                        'mainstats': ['cr', 'cd'],
+                        'substats': ['cr', 'cd', 'atkp', 'spd'],
+                        'substat_matches': 0,
+                    },
+                },
+                {
+                    'desc': '(dbf)',
+                    'f': f.Artifact_Accept_Filter,
+                    'p': {
+                        'types': ['body'],
+                        'mainstats': ['ehr'],
+                        'substats': ['spd', 'atkp', 'be'],
+                        'substat_matches': 0,
+                    },
+                },
+                {
+                    'desc': '(sup)',
+                    'f': f.Artifact_Accept_Filter,
+                    'p': {
+                        'types': ['body'],
+                        'mainstats': ['ohb'],
+                        'substats': ['spd', 'eres', 'hpp'],
+                        'substat_matches': 0,
+                    },
+                },
+            ],
         },
     },
-    '5.1': {
-        # Keep any feet with atkp
-        'desc': 'Keep any feet with atkp',
-        'f': f.Artifact_Accept_Filter,
+    '5':{
+        # Keep any feet with atkp and substats matching dmg/dbf
+        'desc': 'Keep any feet with atkp and substats matching dmg/dbf',
+        'f': f.Any_Of,
         'p': {
-            'types': ['feet'],
-            'mainstats': ['atkp'],
-            'substats': ['spd', 'ehr', 'be'],
-            'substat_matches': 0,
+            'fs': [
+                {
+                    'f': f.Artifact_Accept_Filter,
+                    'p': {
+                        'types': ['feet'],
+                        'mainstats': ['atkp'],
+                        'substats': ['cr', 'cd', 'spd'],
+                        'substat_matches': 0,
+                    },
+                },
+                {
+                    'f': f.Artifact_Accept_Filter,
+                    'p': {
+                        'types': ['feet'],
+                        'mainstats': ['atkp'],
+                        'substats': ['spd', 'ehr', 'be'],
+                        'substat_matches': 0,
+                    },
+                },
+            ],
         },
     },
-    '6.0': {
+    '6': {
         # Keep any sphere with edmg
         'desc': 'Keep any sphere with edmg',
         'f': f.Artifact_Accept_Filter,
@@ -319,70 +336,82 @@ filters.update({0: {
             'substat_matches': 0,
         },
     },
-    '7.0': {
-        # Keep any body, feet, sphere, or rope with hpp, defp, atkp and at least one crit stat or spd stat
-        'desc': 'Keep any body, feet, sphere, or rope with hpp, defp, atkp and at least one CR/CD/SPD',
-        'f': f.Artifact_Accept_Filter,
+    '7': {
+        # Keep any body, feet, sphere, or rope with hpp, defp, atkp and dmg/dbf/sup stat >= 1
+        'desc': 'Keep any body, feet, sphere, or rope with hpp, defp, atkp and dmg/dbf/sup stat >= 1',
+        'f': f.Any_Of,
         'p': {
-            'types': ['body', 'feet', 'sphere', 'rope'],
-            'mainstats': ['hpp', 'defp', 'atkp'],
-            'substats': ['cr', 'cd', 'spd'],
-            'substat_matches': 1,
+            'fs': [
+                {
+                    'desc': '(dmg)',
+                    'f': f.Artifact_Accept_Filter,
+                    'p': {
+                        'types': ['body', 'feet', 'sphere', 'rope'],
+                        'mainstats': ['hpp', 'defp', 'atkp'],
+                        'substats': ['cr', 'cd', 'spd'],
+                        'substat_matches': 1,
+                    },
+                },
+                {
+                    'desc': '(dbf)',
+                    'f': f.Artifact_Accept_Filter,
+                    'p': {
+                        'types': ['body', 'feet', 'sphere', 'rope'],
+                        'mainstats': ['atkp'],
+                        'substats': ['spd', 'ehr'],
+                        'substat_matches': 1,
+                    },
+                },
+                {
+                    'desc': '(sup)',
+                    'f': f.Artifact_Accept_Filter,
+                    'p': {
+                        'types': ['body', 'feet', 'sphere', 'rope'],
+                        'mainstats': ['hpp', 'defp'],
+                        'substats': ['spd', 'eres'],
+                        'substat_matches': 1,
+                    },
+                },
+            ],
         },
     },
-    '7.1': {
-        # Keep any body, feet, sphere, or rope with atkp and ehr or spd stat
-        'desc': 'Keep any body, feet, sphere, or rope with atkp and at least one EHR/SPD',
-        'f': f.Artifact_Accept_Filter,
-        'p': {
-            'types': ['body', 'feet', 'sphere', 'rope'],
-            'mainstats': ['atkp'],
-            'substats': ['spd', 'ehr'],
-            'substat_matches': 1,
-        },
-    },
-    '7.2': {
-        # Keep any body, feet, sphere, or rope with hpp or defp and eres or spd stat
-        'desc': 'Keep any body, feet, sphere, or rope with hpp or defp and at least one ERES/SPD',
-        'f': f.Artifact_Accept_Filter,
-        'p': {
-            'types': ['body', 'feet', 'sphere', 'rope'],
-            'mainstats': ['hpp', 'defp'],
-            'substats': ['spd', 'eres'],
-            'substat_matches': 1,
-        },
-    },
-    '8.0': {
+    '8': {
         # Keep any hat or hands with at least one crit stat or spd stat
-        'desc' : 'Keep any hat or hands with at least one CR/CD/SPD',
-        'f': f.Artifact_Accept_Filter,
+        'desc' : 'Keep any hat or hands with at least one stat matching dmg/dbf/sup template',
+        'f': f.Any_Of,
         'p': {
-            'types': ['head', 'hands'],
-            'mainstats': ['hp', 'atk'],
-            'substats': ['cr', 'cd', 'spd', 'atkp'],
-            'substat_matches': 1,
-        },
-    },
-    '8.1': {
-        # Keep any hat or hands  with spd or ehr
-        'desc': 'Keep any hat or hands with at least one SPD/EHR',
-        'f': f.Artifact_Accept_Filter,
-        'p': {
-            'types': ['head', 'hands'],
-            'mainstats': ['hp', 'atk'],
-            'substats': ['spd', 'ehr', 'be', 'atkp'],
-            'substat_matches': 1,
-        },
-    },
-    '8.2': {
-        # Keep any hat or hands with spd or eres
-        'desc': 'Keep any hat or hands with at least one SPD/ERES',
-        'f': f.Artifact_Accept_Filter,
-        'p': {
-            'types': ['head', 'hands'],
-            'mainstats': ['hp', 'atk'],
-            'substats': ['spd', 'eres', 'hpp', 'defp'],
-            'substat_matches': 1,
+            'fs': [
+                {
+                    'desc': '(dmg)',
+                    'f': f.Artifact_Accept_Filter,
+                    'p': {
+                        'types': ['head', 'hands'],
+                        'mainstats': ['hp', 'atk'],
+                        'substats': ['cr', 'cd', 'spd'],
+                        'substat_matches': 1,
+                    },
+                },
+                {
+                    'desc': '(dbf)',
+                    'f': f.Artifact_Accept_Filter,
+                    'p': {
+                        'types': ['head', 'hands'],
+                        'mainstats': ['hp', 'atk'],
+                        'substats': ['spd', 'ehr', 'be'],
+                        'substat_matches': 1,
+                    },
+                },
+                {
+                    'desc': '(sup)',
+                    'f': f.Artifact_Accept_Filter,
+                    'p': {
+                        'types': ['head', 'hands'],
+                        'mainstats': ['hp', 'atk'],
+                        'substats': ['spd', 'eres', 'hpp'],
+                        'substat_matches': 1,
+                    },
+                },
+            ],
         },
     },
 }})
@@ -391,58 +420,30 @@ filters.update({0: {
 filters.update({3: copy.deepcopy(filters[0])})
 #for artifact_filter in filters[3].values():
 #    artifact_filter['p']['substat_matches'] += 1
-# Revert 0, 1, 2
-#filters[3]['0']['p']['substat_matches'] = 0    # 2 of CR | CD | SPD
-#filters[3]['2']['p']['substat_matches'] = 0    # ERR rope
-#filters[3]['1.0']['p']['substat_matches'] = 0    # SPD boots (dmg)
-#filters[3]['1.1']['p']['substat_matches'] = 0    # SPD boots (debuff)
-#filters[3]['1.2']['p']['substat_matches'] = 0    # SPD boots (supp)
-
 
 # 0. Keep any artifact with 2 of CR || CD || SPD. No change
-# 1.0 Keep any feet with mainstat spd (dmg). No change
-# 1.1 Keep any feet with mainstat spd (debuff). No change
-# 1.2 Keep any feet with mainstat spd (supp). No change
-# 2 Keep any ropes with mainstat err. No change
-# 3 Keep any ropes with mainstat be
-filters[3]['3']['desc'] = filters[3]['3']['desc'] + ' and at least 1 debuff stat'
+# 1. Keep any feet with mainstat spd dmg/dbf/sup. No change
+# 2. Keep any ropes with mainstat err. No change
+# 3. Keep any ropes with mainstat be and dbf stat >= 1
 filters[3]['3']['p']['substat_matches'] += 1
-# 4.0 Keep any body with mainstat of either CR, CD
-filters[3]['4.0']['desc'] = filters[3]['4.0']['desc'] + ' and at least 1 dmg stat'
-filters[3]['4.0']['p']['substat_matches'] += 1
-# 4.1 Keep any body with mainstat of EHR
-filters[3]['4.1']['desc'] = filters[3]['4.1']['desc'] + ' and at least 1 debuff stat'
-filters[3]['4.1']['p']['substat_matches'] += 1
-# 4.2 Keep any body with mainstat of OHB
-filters[3]['4.2']['desc'] = filters[3]['4.2']['desc'] + ' and at least 1 support stat'
-filters[3]['4.2']['p']['substat_matches'] += 1
-# 5.0 Keep any feet with atkp (dmg)
-filters[3]['5.0']['desc'] = filters[3]['5.0']['desc'] + ' and at least 1 dmg stat'
-filters[3]['5.0']['p']['substat_matches'] += 1
-# 5.1 Keep any feet with atkp (debuff)
-filters[3]['5.1']['desc'] = filters[3]['5.1']['desc'] + ' and at least 1 debuff stat'
-filters[3]['5.1']['p']['substat_matches'] += 1
-# 6.0 Keep any sphere with edmg (dmg)
-filters[3]['6.0']['desc'] = filters[3]['6.0']['desc'] + ' and at least 1 dmg stat'
-filters[3]['6.0']['p']['substat_matches'] += 1
-# 7.0 Keep any body, feet, sphere, or rope with hpp, defp, atkp and at least one CR/CD/SPD (dmg)
-filters[3]['7.0']['desc'] = filters[3]['7.0']['desc'] + ' and at least 1 dmg stat'
-filters[3]['7.0']['p']['substat_matches'] += 1
-# 7.1 Keep any body, feet, sphere, or rope with at least one EHR/SPD (debuff)
-filters[3]['7.1']['desc'] = filters[3]['7.1']['desc'] + ' and at least 1 debuff stat'
-filters[3]['7.1']['p']['substat_matches'] += 1
-# 7.2 Keep any body, feet, sphere, or rope with hpp or defp and at least one ERES/SPD (supp)
-filters[3]['7.2']['desc'] = filters[3]['7.2']['desc'] + ' and at least 1 support stat'
-filters[3]['7.2']['p']['substat_matches'] += 1
-# 8.0 Keep any hat or hands with at least one crit stat or spd stat
-filters[3]['8.0']['desc'] = filters[3]['8.0']['desc'] + ' and at least 1 dmg stat'
-filters[3]['8.0']['p']['substat_matches'] += 1
-# 8.1 Keep any hat or hands  with spd or ehr
-filters[3]['8.1']['desc'] = filters[3]['8.1']['desc'] + ' and at least 1 debuff stat'
-filters[3]['8.1']['p']['substat_matches'] += 1
-# 8.2 Keep any hat or hands with spd or eres
-filters[3]['8.2']['desc'] = filters[3]['8.2']['desc'] + ' and at least 1 supp stat'
-filters[3]['8.2']['p']['substat_matches'] += 1
+# 4.0 Keep any body with mainstat of either CR, CD, EHR, OHB and dmg/dbf/sup stat >= 1
+for flt in filters[3]['4']['p']['fs']:
+    flt['p']['substat_matches'] += 1
+# 5 Keep any feet with atkp and dmg/dbf stat >= 1
+for flt in filters[3]['5']['p']['fs']:
+    flt['p']['substat_matches'] += 1
+# 6 Keep any sphere with edmg (dmg) >= 1
+filters[3]['6']['p']['substat_matches'] += 1
+# 7.0 Keep any body, feet, sphere, or rope with hpp, defp, atkp and at dmg/dbf/sup stat >= 2
+for flt in filters[3]['7']['p']['fs']:
+    flt['p']['substat_matches'] += 1
+# 8.0 Keep any hat or hands with dmg/dbf/sup stat >= 2
+filters[3]['8']['p']['fs'][0]['p']['substats'] = ['cr', 'cd', 'spd', 'atkp']
+filters[3]['8']['p']['fs'][0]['p']['substat_matches'] += 1
+filters[3]['8']['p']['fs'][0]['p']['substats'] = ['spd', 'ehr', 'be', 'atkp']
+filters[3]['8']['p']['fs'][0]['p']['substat_matches'] += 1
+filters[3]['8']['p']['fs'][0]['p']['substats'] = ['spd', 'eres', 'hpp']
+filters[3]['8']['p']['fs'][0]['p']['substat_matches'] += 1
 
 filters.update({6: copy.deepcopy(filters[3])})
 
@@ -453,17 +454,17 @@ Assuming only CR & CD are desireable:
 - therefore the best we can get at +6 is 3/8 or 4/9
 '''
 # Rollcount filters at +9
-filters.update({9: copy.deepcopy(filters[0])})
-for artifact_filter in filters[9].values():
-    artifact_filter.update({'f': f.Artifact_Rollcount_Filter})
-    artifact_filter['p'].update({'min_roll_count': 5})
+filters.update({9: copy.deepcopy(filters[6])})
+# for artifact_filter in filters[9].values():
+#     artifact_filter.update({'f': f.Artifact_Rollcount_Filter})
+#     artifact_filter['p'].update({'min_roll_count': 5})
 
 # Exceptions and extensions
-filters[9]['4.2']['p']['substats'] = ['spd', 'eres', 'hpp']  # OHB body (supp)
-filters[9]['6.0']['p']['substats'] = ['cr', 'cd', 'spd', 'atkp']  # EDMG sphere (dmg)
-filters[9]['7.1']['p']['substats'] = ['spd', 'ehr', 'be']  # ATKP body/feet/sphere/rope (debuff)
-filters[9]['7.2']['p']['substats'] = ['spd', 'eres', 'hpp']  # HPP/DEFP body/feet/sphere/rope (supp)
-filters[9]['8.2']['p']['substats'] = ['spd', 'eres', 'hpp']  # hat/hands add hpp (supp)
+# filters[9]['4.2']['p']['substats'] = ['spd', 'eres', 'hpp']  # OHB body (supp)
+# filters[9]['6.0']['p']['substats'] = ['cr', 'cd', 'spd', 'atkp']  # EDMG sphere (dmg)
+# filters[9]['7.1']['p']['substats'] = ['spd', 'ehr', 'be']  # ATKP body/feet/sphere/rope (debuff)
+# filters[9]['7.2']['p']['substats'] = ['spd', 'eres', 'hpp']  # HPP/DEFP body/feet/sphere/rope (supp)
+# filters[9]['8.2']['p']['substats'] = ['spd', 'eres', 'hpp']  # hat/hands add hpp (supp)
 
 # Rejection filters
 filters_exclude = {}
@@ -516,27 +517,8 @@ filters_exclude.update({0: {
         }
     },
     4: {
-        # Reject if unable to meet roll count by +9 except err rope and spd boots
-        # Don't break out by dmg, debug & supp since rejection filter will exclude everything
-        'desc': 'Reject if unable to meet roll count by +9 except err rope and spd boots',
-        'f': f.Artifact_Reject_Rollcount_Early_Filter,
-        'p': {
-            'types': ['head', 'hands', 'body', 'feet', 'sphere', 'rope'],
-            'mainstats': [
-                'hp', 'atk', 
-                'hpp', 'atkp', 'defp', 
-                'ehr', 'ohb', 'cr', 'cd', 
-                'edmg', 
-                'be',
-                ],
-            'substats': ['cr', 'cd', 'spd', 'ehr', 'be', 'eres', 'atkp'],
-            'target_level': 9,
-            'min_roll_count': 5,
-        }
-    },
-    5: {
-        # Reject if no dmg/dbf/sup subsets will meet roll count by +9 
-        'desc': 'Reject if no dmg/dbf/sup subsets will meet roll count by +9',
+        # Reject if no dmg/dbf/sup template will meet roll count by +9 
+        'desc': 'Reject if no dmg/dbf/sup template will meet roll count by +9 except err and spd',
         'f': f.All_Of,
         'p': {
             'fs': [
