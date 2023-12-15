@@ -74,6 +74,24 @@ def Artifact_Rollcount_Filter(artifact, filter):
     return False
 
 
+def All_Of(artifact, filter):
+    # Returns True if artifact matches all of the filters
+
+    return all(fs['f'](artifact, fs['p']) for fs in filter['fs'])
+
+
+def None_Of(artifact, filter):
+    # Returns True if artifact matches none of the filters
+    
+    return all(not fs['f'](artifact, fs['p']) for fs in filter['fs'])
+
+
+def Any_Of(artifact, filter):
+    # Returns True if artifact matches any of the filters
+    
+    return any(fs['f'](artifact, fs['p']) for fs in filter['fs'])
+        
+
 def Keep_Artifact(artifact, inclusion_filters, exclusion_filters, debug=False):
     # Returns True if artifact matches any inclusion filter, and does not match any exclusion filter
     # Rejection filters will override inclusion
