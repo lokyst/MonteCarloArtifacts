@@ -332,7 +332,7 @@ filters.update({0: {
         'p': {
             'types': ['sphere'],
             'mainstats': ['edmg'],
-            'substats': ['cr', 'cd', 'spd'],
+            'substats': ['cr', 'cd', 'spd', 'atkp', 'ehr', 'be'],
             'substat_matches': 0,
         },
     },
@@ -358,7 +358,7 @@ filters.update({0: {
                     'p': {
                         'types': ['body', 'feet', 'sphere', 'rope'],
                         'mainstats': ['atkp'],
-                        'substats': ['spd', 'ehr'],
+                        'substats': ['spd', 'ehr', 'be'],
                         'substat_matches': 1,
                     },
                 },
@@ -418,9 +418,6 @@ filters.update({0: {
 
 # Tighten Filters at +3 except 0, 1, 2 
 filters.update({3: copy.deepcopy(filters[0])})
-#for artifact_filter in filters[3].values():
-#    artifact_filter['p']['substat_matches'] += 1
-
 # 0. Keep any artifact with 2 of CR || CD || SPD. No change
 # 1. Keep any feet with mainstat spd dmg/dbf/sup. No change
 # 2. Keep any ropes with mainstat err. No change
@@ -439,32 +436,31 @@ for flt in filters[3]['7']['p']['fs']:
     flt['p']['substat_matches'] += 1
 # 8.0 Keep any hat or hands with dmg/dbf/sup stat >= 2
 filters[3]['8']['p']['fs'][0]['p']['substats'] = ['cr', 'cd', 'spd', 'atkp']
-filters[3]['8']['p']['fs'][0]['p']['substat_matches'] += 1
-filters[3]['8']['p']['fs'][0]['p']['substats'] = ['spd', 'ehr', 'be', 'atkp']
-filters[3]['8']['p']['fs'][0]['p']['substat_matches'] += 1
-filters[3]['8']['p']['fs'][0]['p']['substats'] = ['spd', 'eres', 'hpp']
-filters[3]['8']['p']['fs'][0]['p']['substat_matches'] += 1
+filters[3]['8']['p']['fs'][1]['p']['substats'] = ['spd', 'ehr', 'be', 'atkp']
+filters[3]['8']['p']['fs'][2]['p']['substats'] = ['spd', 'eres', 'hpp']
+for flt in filters[3]['7']['p']['fs']:
+    flt['p']['substat_matches'] += 1
 
+# Retain filters at +6
 filters.update({6: copy.deepcopy(filters[3])})
 
-'''
-Assuming only CR & CD are desireable:
-- the absolute best we can get at +15 is 6/8 or 7/9
-- therefore the best we can get at +9 is 4/8 or 5/9
-- therefore the best we can get at +6 is 3/8 or 4/9
-'''
-# Rollcount filters at +9
+# Change filters at +9 to Rollcount
+# Assuming only CR & CD are desireable:
+# - the absolute best we can get at +15 is 6/8 or 7/9
+# - therefore the best we can get at +9 is 4/8 or 5/9
+# - therefore the best we can get at +6 is 3/8 or 4/9
 filters.update({9: copy.deepcopy(filters[6])})
-# for artifact_filter in filters[9].values():
-#     artifact_filter.update({'f': f.Artifact_Rollcount_Filter})
-#     artifact_filter['p'].update({'min_roll_count': 5})
+for artifact_filter in filters[9].values():
+    if 'fs' in artifact_filter['p']:
+        for flt in artifact_filter['p']['fs']:
+            flt['p'].update({'f': f.Artifact_Rollcount_Filter})
+            flt['p'].update({'min_roll_count': 5})
+    else:
+        artifact_filter.update({'f': f.Artifact_Rollcount_Filter})
+        artifact_filter['p'].update({'min_roll_count': 5})
 
-# Exceptions and extensions
-# filters[9]['4.2']['p']['substats'] = ['spd', 'eres', 'hpp']  # OHB body (supp)
-# filters[9]['6.0']['p']['substats'] = ['cr', 'cd', 'spd', 'atkp']  # EDMG sphere (dmg)
-# filters[9]['7.1']['p']['substats'] = ['spd', 'ehr', 'be']  # ATKP body/feet/sphere/rope (debuff)
-# filters[9]['7.2']['p']['substats'] = ['spd', 'eres', 'hpp']  # HPP/DEFP body/feet/sphere/rope (supp)
-# filters[9]['8.2']['p']['substats'] = ['spd', 'eres', 'hpp']  # hat/hands add hpp (supp)
+# Exceptions and extensions at +9
+# This space for rent
 
 # Rejection filters
 filters_exclude = {}
