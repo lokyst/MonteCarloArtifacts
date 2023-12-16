@@ -1,0 +1,1 @@
+{"artifacts": {"0": {"type": "hands", "set": null, "mainstat": "atk", "level": 3, "substats": {"eres": {"rollCount": 1, "rollValue": 0}, "ehr": {"rollCount": 1, "rollValue": 0}, "hpp": {"rollCount": 1, "rollValue": 0}, "def": {"rollCount": 1, "rollValue": 0}}, "max_lines": 4, "max_level": 15, "substat_level_increment": 3, "exp": 2400}}, "results": {"0": false}}

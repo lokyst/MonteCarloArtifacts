@@ -4,6 +4,8 @@ import contextlib
 import hsr as g
 import filter as f
 import check_artifact as c
+import numpy.random as rnd
+import json
 
 # Get list of equip slot names
 slotType = g.slotType
@@ -232,6 +234,19 @@ class Artifact:
 
     def get_substats(self):
         return self.artifact_substats
+
+    def to_dict(self):
+        return {
+            'type': self.artifact_type,
+            'set': self.artifact_set,
+            'mainstat': self.artifact_mainstat,
+            'level': self.artifact_level,
+            'substats': self.artifact_substats,
+            'max_lines': self.artifact_max_lines,
+            'max_level': self.artifact_max_level,
+            'substat_level_increment': self.artifact_substat_level_increment,
+            'exp': self.artifact_exp,
+        }
         
 
 
@@ -240,6 +255,9 @@ class Artifact:
 ##########################################
 debug = True
 trials = 1
+rnd.seed(1234)
+artifacts = {}
+results = {}
 
 # Initialize counters
 successes_by_tier = {}
@@ -307,13 +325,23 @@ for i in range(trials):
                     slot_counter[artifact.get_slot()]['total'] += 1
                     slot_counter[artifact.get_slot()][artifact.get_mainstat()] += 1
                     artifacts_by_starting_lines[artifact.get_n_starting_lines()] += 1
+                    artifacts[i] = artifact.to_dict()
+                    results[i] = True
                     break
 
         else:
             artifact_exp_gained += artifact.fodder()
             c.verify_artifact_fodder_exp_return(artifact, tier, g)
+            artifacts[i] = artifact.to_dict()
+            results[i] = False
             break
-        
+
+
+# Output to JSON
+with open('results.json', 'w') as outfile:
+    json.dump({'artifacts': artifacts, 
+            'results': results}, outfile)
+
 print('')
 for i in successes_by_tier:
     print('%3s: %4i  %.3f' % (('T'+str(i)), successes_by_tier[i], successes_by_tier[i] / trials))
