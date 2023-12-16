@@ -1,9 +1,12 @@
+from os import truncate
 from numpy.random import choice
 import copy
 import contextlib
 import genshin as g
 import filter as f
 import check_artifact as c
+import numpy.random as rnd
+import json
 
 # Get list of equip slot names
 slotType = g.slotType
@@ -229,14 +232,32 @@ class Artifact:
 
     def get_mainstat(self):
         return self.artifact_mainstat
+
+    def to_dict(self):
+        return {
+            'type': self.artifact_type,
+            'set': self.artifact_set,
+            'mainstat': self.artifact_mainstat,
+            'level': self.artifact_level,
+            'substats': self.artifact_substats,
+            'rarity': self.artifact_rarity,
+            'max_lines': self.artifact_max_lines,
+            'max_level': self.artifact_max_level,
+            'substat_level_increment': self.artifact_substat_level_increment,
+            'starting_lines': self.artifact_starting_lines,
+            'exp': self.artifact_exp,            
+        }
         
 
 
 ##########################################
 # Simulation
 ##########################################
-debug = False
-trials = 10000
+debug = True
+trials = 1
+rnd.seed(1234)
+artifacts = {}
+results = {}
 
 # Initialize counters
 successes_by_tier = {}
@@ -303,13 +324,21 @@ for i in range(trials):
                     slot_counter[artifact.get_slot()]['total'] += 1
                     slot_counter[artifact.get_slot()][artifact.get_mainstat()] += 1
                     artifacts_by_starting_lines[artifact.get_n_starting_lines()] += 1
+                    artifacts[i] = artifact.to_dict()
+                    results[i] = True
                     break
 
         else:
             artifact_exp_gained += artifact.fodder()
             c.verify_artifact_fodder_exp_return(artifact, tier, g)
+            artifacts[i] = artifact.to_dict()
+            results[i] = False
             break
-        
+
+# output to json
+with open('results.json', 'w') as outfile:
+    json.dump({'artifacts': artifacts, 'results': results}, outfile)
+
 print('')
 for i in successes_by_tier:
     print('%3s: %4i  %.3f' % (('T'+str(i)), successes_by_tier[i], successes_by_tier[i] / trials))
