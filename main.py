@@ -240,11 +240,9 @@ class Artifact:
             'mainstat': self.artifact_mainstat,
             'level': self.artifact_level,
             'substats': self.artifact_substats,
-            'rarity': self.artifact_rarity,
             'max_lines': self.artifact_max_lines,
             'max_level': self.artifact_max_level,
             'substat_level_increment': self.artifact_substat_level_increment,
-            'starting_lines': self.artifact_starting_lines,
             'exp': self.artifact_exp,            
         }
         
