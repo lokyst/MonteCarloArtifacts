@@ -2,7 +2,7 @@ from os import truncate
 from numpy.random import choice
 import copy
 import contextlib
-import genshin as g
+import hsr as g
 import filter as f
 import check_artifact as c
 import numpy.random as rnd
@@ -251,8 +251,8 @@ class Artifact:
 ##########################################
 # Simulation
 ##########################################
-debug = True
-trials = 1
+debug = False
+trials = 1000
 rnd.seed(1234)
 artifacts = {}
 results = {}
@@ -324,6 +324,9 @@ for i in range(trials):
                     artifacts_by_starting_lines[artifact.get_n_starting_lines()] += 1
                     artifacts[i] = artifact.to_dict()
                     results[i] = True
+                    if artifact.get_mainstat() == 'err':
+                        artifact.print()
+                        f.Keep_Artifact(artifact, g.filters[tier], g.filters_exclude[tier], True)
                     break
 
         else:
@@ -331,6 +334,9 @@ for i in range(trials):
             c.verify_artifact_fodder_exp_return(artifact, tier, g)
             artifacts[i] = artifact.to_dict()
             results[i] = False
+            if artifact.get_mainstat() == 'err':
+                artifact.print()
+                f.Keep_Artifact(artifact, g.filters[tier], g.filters_exclude[tier], True)
             break
 
 # output to json

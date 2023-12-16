@@ -71,9 +71,9 @@ def Keep_Artifact(artifact, inclusion_filters, exclusion_filters, debug=False):
 
     if debug:
         if state:
-            print('Accepted: Rule %i' % i)
+            print('Accepted: Rule %s' % i)
         else: 
-            print('Rejected: Rule %i' % j)
+            print('Rejected: Rule %s' % j)
 
     return state
 
