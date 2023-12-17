@@ -235,6 +235,12 @@ class Artifact:
     def get_substats(self):
         return self.artifact_substats
 
+    def get_rarity(self):
+        return self.artifact_rarity
+
+    def get_exp(self):
+        return self.artifact_exp
+
     def to_dict(self):
         return {
             'type': self.artifact_type,
@@ -251,12 +257,40 @@ class Artifact:
 
 
 ##########################################
-# Simulation
+# Generate All Artifacts at All Levels
 ##########################################
-debug = True
-trials = 1
+debug = False
+trials = 1000
 rnd.seed(1234)
 artifacts = {}
+artifact = Artifact()
+
+for i in range(trials):
+    artifacts.update({i: {}})
+    # Generate Random Artifact
+    artifact.random()
+    if debug:
+        # artifact = Artifact('goblet', None, 'dmgp', ['cr', 'hpp', 'er'])
+        # artifact = Artifact('rope', None, 'err', ['atkp', 'cd', 'hpp'])
+        # artifact.Generate_Substats()
+        print('')
+        artifact.print()
+        pass
+    if not c.artifact_is_valid(artifact, 0, g):
+        artifact.print()
+
+    lvl = 0
+    artifacts[i].update({lvl: copy.deepcopy(artifact)})
+    while lvl < artifact.get_max_level():
+        artifact.Level_Artifact(artifact.get_substat_level_increment())
+        lvl += artifact.get_substat_level_increment()
+        artifacts[i].update({lvl: copy.deepcopy(artifact)})
+
+
+
+##########################################
+# Simulation
+##########################################
 results = {}
 
 # Initialize counters
@@ -276,26 +310,8 @@ artifacts_by_starting_lines = {
     4: 0,    
 }
 
-# Generate Random Artifact
-artifact = Artifact(
-    artifact_max_level = g.artifact_max_level, 
-    artifact_substat_level_increment = g.artifact_substat_level_increment
-)
-
-#f.print_filters(g.filters[0])
-
+artifact = None
 for i in range(trials):
-    artifact.random()
-    if debug:
-        # artifact = Artifact('goblet', None, 'dmgp', ['cr', 'hpp', 'er'])
-        # artifact = Artifact('head', None, 'hp', ['atkp', 'cd', 'hpp'])
-        # artifact.Generate_Substats()
-        print('')
-        artifact.print()
-        pass
-    if not c.artifact_is_valid(artifact, 0, g):
-        artifact.print()
-
     lvl = 0
     tiers = g.tiers.copy()
     tiers.sort()
@@ -304,6 +320,8 @@ for i in range(trials):
     # Filter by tiers or take to max level
     while len(tiers) > 0:
         tier = tiers.pop()
+        artifact = artifacts[i][lvl]
+
         if f.Keep_Artifact(artifact, g.filters[tier], g.filters_exclude[tier], debug):
             successes_by_tier[tier] += 1
 
@@ -312,8 +330,12 @@ for i in range(trials):
 
             # Level in increments until next tier level or max level
             while artifact.get_level() < next_tier:
-                artifact_exp_consumed += artifact.Level_Artifact(artifact.get_substat_level_increment())
+                start_exp = artifact.get_exp()
                 lvl += artifact.get_substat_level_increment()
+                artifact = artifacts[i][lvl]
+                end_exp = artifact.get_exp()
+                artifact_exp_consumed += end_exp - start_exp
+
                 if not c.artifact_is_valid(artifact, lvl, g):
                     artifact.print()
 
