@@ -295,7 +295,7 @@ def Generate_All_Artifacts(trials=1000, seed=1234, debug=False):
 # Simulation
 ##########################################
 temp = Generate_All_Artifacts(1000)
-debug = True
+debug = False
 
 artifacts = {}
 if debug:

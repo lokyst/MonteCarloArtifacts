@@ -216,7 +216,7 @@ filters.update({0: {
                         'mainstats': ['spd'],
                         'substats': dmg,
                         'substat_matches': 0,
-                        'min_roll_count': 5,
+                        'min_roll_count': 4,
                     },
                 },
                 {
@@ -282,7 +282,7 @@ filters.update({0: {
                         'mainstats': ['cr', 'cd'],
                         'substats': dmg,
                         'substat_matches': 0,
-                        'min_roll_count': 5,
+                        'min_roll_count': 4,
                     },
                 },
                 {
@@ -323,7 +323,7 @@ filters.update({0: {
                         'mainstats': ['atkp'],
                         'substats': dmg,
                         'substat_matches': 0,
-                        'min_roll_count': 5,
+                        'min_roll_count': 4,
                     },
                 },
                 {
@@ -348,7 +348,7 @@ filters.update({0: {
             'mainstats': ['edmg'],
             'substats': dmg,
             'substat_matches': 0,
-            'min_roll_count': 5,
+            'min_roll_count': 4,
         },
     },
     '7': {
@@ -521,12 +521,12 @@ filters_exclude.update({0: {
         }
     },
     3: {
-        # Reject any rope with 2 flat stats except err rope
-        'desc': 'Reject any rope with 2 flat stats except err rope',
+        # Reject any rope with 2 flat stats 
+        'desc': 'Reject any rope with 2 flat stats',
         'f': f.Artifact_Reject_Filter,
         'p': {
             'types': ['rope'],
-            'mainstats': ['be'],
+            'mainstats': ['err', 'be'],
             'substats': ['hp', 'def', 'atk'],
             'substat_matches': 2,
         }
