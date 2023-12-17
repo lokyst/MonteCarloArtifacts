@@ -405,8 +405,7 @@ tier = 0
 print('Exp lost if foddering Lvl_%i: %i' % (tier, (trials-successes_by_tier[tier])*g.base_exp_gain['5*']))
 
 print('')
-print('L%i Artifacts Summary: ' % g.artifact_max_level)
-print(artifacts_by_starting_lines)
+print('L%i Artifacts Summary: %i Trial(s)' % (g.artifact_max_level, trials))
+print('starting lines:', artifacts_by_starting_lines)
 for slot in slot_counter.keys():
-    print(slot)
-    print(slot_counter[slot])
+    print(slot, slot_counter[slot])
