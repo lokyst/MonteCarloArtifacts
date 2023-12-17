@@ -177,6 +177,9 @@ From <https://www.reddit.com/r/GenshinImpactTips/comments/xwbvrb/guide_to_choose
 # ['hp', 'atk', 'hpp', 'atkp', 'defp', 'ehr', 'ohb', 'cr', 'cd', 'spd', 'edmg', 'be', 'err']
 # Substats
 # ['hp', 'atk', 'def', 'hpp', 'atkp', 'defp', 'be', 'ehr', 'eres', 'cr', 'cd', 'spd',]
+dmg = ['spd', 'cr', 'cd', 'atkp']
+dbf = ['spd', 'ehr', 'be', 'atkp']
+sup = ['spd', 'eres', 'hpp', 'defp']
 # Filters at +0
 filters = {}
 filters.update({0: {
@@ -196,6 +199,7 @@ filters.update({0: {
             ],
             'substats': ['cr', 'cd', 'spd'],
             'substat_matches': 2,
+            'min_roll_count': 5
         },
     },
     '1': {
@@ -210,8 +214,9 @@ filters.update({0: {
                     'p': {
                         'types': ['feet'],
                         'mainstats': ['spd'],
-                        'substats': ['cr', 'cd', 'atkp'],
+                        'substats': dmg,
                         'substat_matches': 0,
+                        'min_roll_count': 5,
                     },
                 },
                 {
@@ -220,8 +225,9 @@ filters.update({0: {
                     'p': {
                         'types': ['feet'],
                         'mainstats': ['spd'],
-                        'substats': ['ehr', 'atkp', 'be'],
+                        'substats': dbf,
                         'substat_matches': 0,
+                        'min_roll_count': 5,
                     },
                 },
                 {
@@ -230,8 +236,9 @@ filters.update({0: {
                     'p': {
                         'types': ['feet'],
                         'mainstats': ['spd'],
-                        'substats': ['eres', 'hpp', 'defp'],
+                        'substats': sup,
                         'substat_matches': 0,
+                        'min_roll_count': 5,
                     },
                 },
             ],
@@ -246,6 +253,7 @@ filters.update({0: {
             'mainstats': ['err'],
             'substats': [],
             'substat_matches': 0,
+            'min_roll_count': 5,
         },
     },
     '3': {
@@ -255,8 +263,9 @@ filters.update({0: {
         'p': {
             'types': ['rope'],
             'mainstats': ['be'],
-            'substats': ['ehr', 'spd', 'atkp'],
+            'substats': dbf,
             'substat_matches': 0,
+            'min_roll_count': 5,
         },
     },
     '4': {
@@ -271,8 +280,9 @@ filters.update({0: {
                     'p': {
                         'types': ['body'],
                         'mainstats': ['cr', 'cd'],
-                        'substats': ['cr', 'cd', 'atkp', 'spd'],
+                        'substats': dmg,
                         'substat_matches': 0,
+                        'min_roll_count': 5,
                     },
                 },
                 {
@@ -281,8 +291,9 @@ filters.update({0: {
                     'p': {
                         'types': ['body'],
                         'mainstats': ['ehr'],
-                        'substats': ['spd', 'atkp', 'be'],
+                        'substats': dbf,
                         'substat_matches': 0,
+                        'min_roll_count': 5,
                     },
                 },
                 {
@@ -291,8 +302,9 @@ filters.update({0: {
                     'p': {
                         'types': ['body'],
                         'mainstats': ['ohb'],
-                        'substats': ['spd', 'eres', 'hpp'],
+                        'substats': sup,
                         'substat_matches': 0,
+                        'min_roll_count': 5,
                     },
                 },
             ],
@@ -309,8 +321,9 @@ filters.update({0: {
                     'p': {
                         'types': ['feet'],
                         'mainstats': ['atkp'],
-                        'substats': ['cr', 'cd', 'spd'],
+                        'substats': dmg,
                         'substat_matches': 0,
+                        'min_roll_count': 5,
                     },
                 },
                 {
@@ -318,8 +331,9 @@ filters.update({0: {
                     'p': {
                         'types': ['feet'],
                         'mainstats': ['atkp'],
-                        'substats': ['spd', 'ehr', 'be'],
+                        'substats': dbf,
                         'substat_matches': 0,
+                        'min_roll_count': 5,
                     },
                 },
             ],
@@ -332,8 +346,9 @@ filters.update({0: {
         'p': {
             'types': ['sphere'],
             'mainstats': ['edmg'],
-            'substats': ['cr', 'cd', 'spd', 'atkp', 'ehr', 'be'],
+            'substats': dmg,
             'substat_matches': 0,
+            'min_roll_count': 5,
         },
     },
     '7': {
@@ -348,8 +363,9 @@ filters.update({0: {
                     'p': {
                         'types': ['body', 'feet', 'sphere', 'rope'],
                         'mainstats': ['hpp', 'defp', 'atkp'],
-                        'substats': ['cr', 'cd', 'spd'],
+                        'substats': dmg,
                         'substat_matches': 1,
+                        'min_roll_count': 5,
                     },
                 },
                 {
@@ -358,8 +374,9 @@ filters.update({0: {
                     'p': {
                         'types': ['body', 'feet', 'sphere', 'rope'],
                         'mainstats': ['atkp'],
-                        'substats': ['spd', 'ehr', 'be'],
+                        'substats': dbf,
                         'substat_matches': 1,
+                        'min_roll_count': 5,
                     },
                 },
                 {
@@ -368,8 +385,9 @@ filters.update({0: {
                     'p': {
                         'types': ['body', 'feet', 'sphere', 'rope'],
                         'mainstats': ['hpp', 'defp'],
-                        'substats': ['spd', 'eres'],
+                        'substats': sup,
                         'substat_matches': 1,
+                        'min_roll_count': 5,
                     },
                 },
             ],
@@ -387,8 +405,9 @@ filters.update({0: {
                     'p': {
                         'types': ['head', 'hands'],
                         'mainstats': ['hp', 'atk'],
-                        'substats': ['cr', 'cd', 'spd'],
+                        'substats': dmg,
                         'substat_matches': 1,
+                        'min_roll_count': 5,
                     },
                 },
                 {
@@ -397,8 +416,9 @@ filters.update({0: {
                     'p': {
                         'types': ['head', 'hands'],
                         'mainstats': ['hp', 'atk'],
-                        'substats': ['spd', 'ehr', 'be'],
+                        'substats': dbf,
                         'substat_matches': 1,
+                        'min_roll_count': 5,
                     },
                 },
                 {
@@ -407,8 +427,9 @@ filters.update({0: {
                     'p': {
                         'types': ['head', 'hands'],
                         'mainstats': ['hp', 'atk'],
-                        'substats': ['spd', 'eres', 'hpp'],
+                        'substats': sup,
                         'substat_matches': 1,
+                        'min_roll_count': 5,
                     },
                 },
             ],
@@ -435,9 +456,6 @@ filters[3]['6']['p']['substat_matches'] += 1
 for flt in filters[3]['7']['p']['fs']:
     flt['p']['substat_matches'] += 1
 # 8.0 Keep any hat or hands with dmg/dbf/sup stat >= 2
-filters[3]['8']['p']['fs'][0]['p']['substats'] = ['cr', 'cd', 'spd', 'atkp']
-filters[3]['8']['p']['fs'][1]['p']['substats'] = ['spd', 'ehr', 'be', 'atkp']
-filters[3]['8']['p']['fs'][2]['p']['substats'] = ['spd', 'eres', 'hpp']
 for flt in filters[3]['7']['p']['fs']:
     flt['p']['substat_matches'] += 1
 
@@ -453,11 +471,13 @@ filters.update({9: copy.deepcopy(filters[6])})
 for artifact_filter in filters[9].values():
     if 'fs' in artifact_filter['p']:
         for flt in artifact_filter['p']['fs']:
-            flt['p'].update({'f': f.Artifact_Rollcount_Filter})
+            flt.update({'f': f.Artifact_Rollcount_Filter})
             flt['p'].update({'min_roll_count': 5})
+        artifact_filter['desc'] = artifact_filter['desc'] + ' and meet min roll count: ' + str(flt['p']['min_roll_count'])
     else:
         artifact_filter.update({'f': f.Artifact_Rollcount_Filter})
         artifact_filter['p'].update({'min_roll_count': 5})
+        artifact_filter['desc'] = artifact_filter['desc'] + ' and meet min roll count: ' + str(artifact_filter['p']['min_roll_count'])
 
 # Exceptions and extensions at +9
 # This space for rent
@@ -495,7 +515,8 @@ filters_exclude.update({0: {
             'types': ['body', 'feet', 'sphere'],
             'mainstats': [
                 'ehr', 'ohb', 'cr', 'cd', 
-                'edmg', 
+                'edmg',
+                'spd',
             ],
             'substats': ['hp', 'def', 'atk'],
             'substat_matches': 2,
