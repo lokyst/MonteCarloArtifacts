@@ -178,7 +178,7 @@ From <https://www.reddit.com/r/GenshinImpactTips/comments/xwbvrb/guide_to_choose
 # Substats
 # ['hp', 'atk', 'def', 'hpp', 'atkp', 'defp', 'be', 'ehr', 'eres', 'cr', 'cd', 'spd',]
 dmg = ['spd', 'cr', 'cd', 'atkp']
-dbf = ['spd', 'ehr', 'be', 'atkp']
+dbf = ['spd', 'ehr', 'atkp']
 sup = ['spd', 'eres']
 # Filters at +0
 filters = {}
