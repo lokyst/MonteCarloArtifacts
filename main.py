@@ -259,38 +259,51 @@ class Artifact:
 ##########################################
 # Generate All Artifacts at All Levels
 ##########################################
-debug = False
-trials = 1000
-rnd.seed(1234)
-artifacts = {}
-artifact = Artifact()
-
-for i in range(trials):
-    artifacts.update({i: {}})
-    # Generate Random Artifact
-    artifact.random()
-    if debug:
-        # artifact = Artifact('goblet', None, 'dmgp', ['cr', 'hpp', 'er'])
-        # artifact = Artifact('rope', None, 'err', ['atkp', 'cd', 'hpp'])
-        # artifact.Generate_Substats()
-        print('')
-        artifact.print()
-        pass
-    if not c.artifact_is_valid(artifact, 0, g):
-        artifact.print()
-
-    lvl = 0
-    artifacts[i].update({lvl: copy.deepcopy(artifact)})
-    while lvl < artifact.get_max_level():
-        artifact.Level_Artifact(artifact.get_substat_level_increment())
-        lvl += artifact.get_substat_level_increment()
+def Generate_All_Artifacts(trials=1000, seed=1234, debug=False):
+    # debug = False
+    # trials = 1000
+    rnd.seed(seed)
+    artifacts = {}
+    artifact = Artifact()
+    
+    for i in range(trials):
+        artifacts.update({i: {}})
+        # Generate Random Artifact
+        artifact.random()
+        if debug:
+            # artifact = Artifact('goblet', None, 'dmgp', ['cr', 'hpp', 'er'])
+            # artifact = Artifact('rope', None, 'err', ['atkp', 'cd', 'hpp'])
+            # artifact.Generate_Substats()
+            print('')
+            artifact.print()
+            pass
+        if not c.artifact_is_valid(artifact, 0, g):
+            artifact.print()
+    
+        lvl = 0
         artifacts[i].update({lvl: copy.deepcopy(artifact)})
+        while lvl < artifact.get_max_level():
+            artifact.Level_Artifact(artifact.get_substat_level_increment())
+            lvl += artifact.get_substat_level_increment()
+            artifacts[i].update({lvl: copy.deepcopy(artifact)})
+
+    return artifacts
 
 
 
 ##########################################
 # Simulation
 ##########################################
+temp = Generate_All_Artifacts(1000)
+debug = True
+
+artifacts = {}
+if debug:
+    artifacts.update({0: temp[168]})
+else:
+    artifacts = temp
+trials = len(artifacts)
+
 results = {}
 
 # Initialize counters
@@ -311,16 +324,20 @@ artifacts_by_starting_lines = {
 }
 
 artifact = None
-for i in range(trials):
+kept_artifacts = {}
+for i in artifacts:
     lvl = 0
     tiers = g.tiers.copy()
     tiers.sort()
     tiers.reverse()
+    artifact = artifacts[i][lvl]
+
+    if debug:
+        artifact.print()
 
     # Filter by tiers or take to max level
     while len(tiers) > 0:
         tier = tiers.pop()
-        artifact = artifacts[i][lvl]
 
         if f.Keep_Artifact(artifact, g.filters[tier], g.filters_exclude[tier], debug):
             successes_by_tier[tier] += 1
@@ -347,23 +364,28 @@ for i in range(trials):
                     slot_counter[artifact.get_slot()]['total'] += 1
                     slot_counter[artifact.get_slot()][artifact.get_mainstat()] += 1
                     artifacts_by_starting_lines[artifact.get_n_starting_lines()] += 1
-                    artifacts[i] = artifact.to_dict()
-                    results[i] = True
+                    kept_artifacts[i] = artifact.to_dict()
+                    # results[i] = True
                     break
 
         else:
             artifact_exp_gained += artifact.fodder()
             c.verify_artifact_fodder_exp_return(artifact, tier, g)
-            artifacts[i] = artifact.to_dict()
-            results[i] = False
+            # kept_artifacts[i] = artifact.to_dict()
+            # results[i] = False
             break
 
 
 # Output to JSON
 with open('results.json', 'w') as outfile:
-    json.dump({'artifacts': artifacts, 
+    json.dump({'artifacts': kept_artifacts, 
             'results': results}, outfile)
 
+
+
+##########################################
+# Summarize Results
+##########################################
 print('')
 for i in successes_by_tier:
     print('%3s: %4i  %.3f' % (('T'+str(i)), successes_by_tier[i], successes_by_tier[i] / trials))
