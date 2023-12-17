@@ -181,6 +181,11 @@ dmg = ['spd', 'cr', 'cd', 'atkp']
 dbf = ['spd', 'ehr', 'atkp']
 sup = ['spd', 'eres']
 # Filters at +0
+''' 
+TODO: Too many ropes. Too few body & sphere. Slightly too many heads/hands
+ATKP body, feet and sphere underrepresented relative to HP & DEFP
+Too few CD/CR
+'''
 filters = {}
 filters.update({0: {
     '0': {
@@ -247,14 +252,41 @@ filters.update({0: {
     '2': {
         # Keep any ropes with mainstat err
         'desc': 'Keep any ropes with mainstat err',
-        'f': f.Artifact_Accept_Filter,
+        'f': f.Any_Of,
         'p': {
-            'types': ['rope'],
-            'mainstats': ['err'],
-            'substats': [],
-            'substat_matches': 0,
-            'min_roll_count': 5,
-        },
+            'fs': [
+                {
+                    'f': f.Artifact_Accept_Filter,
+                    'p': {
+                        'types': ['rope'],
+                        'mainstats': ['err'],
+                        'substats': dmg,
+                        'substat_matches': 0,
+                        'min_roll_count': 5,
+                    },
+                },
+                {
+                    'f': f.Artifact_Accept_Filter,
+                    'p': {
+                        'types': ['rope'],
+                        'mainstats': ['err'],
+                        'substats': dbf,
+                        'substat_matches': 0,
+                        'min_roll_count': 5,
+                    },
+                },
+                {
+                    'f': f.Artifact_Accept_Filter,
+                    'p': {
+                        'types': ['rope'],
+                        'mainstats': ['err'],
+                        'substats': sup,
+                        'substat_matches': 0,
+                        'min_roll_count': 5,
+                    },
+                },
+            ]
+         },
     },
     '3': {
         # Keep any ropes with mainstat be
@@ -342,13 +374,30 @@ filters.update({0: {
     '6': {
         # Keep any sphere with edmg
         'desc': 'Keep any sphere with edmg',
-        'f': f.Artifact_Accept_Filter,
+        'f': f.Any_Of,
         'p': {
-            'types': ['sphere'],
-            'mainstats': ['edmg'],
-            'substats': dmg,
-            'substat_matches': 0,
-            'min_roll_count': 4,
+            'fs':[
+                {
+                    'f': f.Artifact_Accept_Filter,
+                    'p': {
+                        'types': ['sphere'],
+                        'mainstats': ['edmg'],
+                        'substats': dmg,
+                        'substat_matches': 0,
+                        'min_roll_count': 4,
+                    },
+                },
+                {
+                    'f': f.Artifact_Accept_Filter,
+                    'p': {
+                        'types': ['sphere'],
+                        'mainstats': ['edmg'],
+                        'substats': dbf,
+                        'substat_matches': 0,
+                        'min_roll_count': 4,
+                    },
+                },
+            ]
         },
     },
     '7': {
@@ -451,7 +500,8 @@ for flt in filters[3]['4']['p']['fs']:
 for flt in filters[3]['5']['p']['fs']:
     flt['p']['substat_matches'] += 1
 # 6 Keep any sphere with edmg (dmg) >= 1
-filters[3]['6']['p']['substat_matches'] += 1
+for flt in filters[3]['6']['p']['fs']:
+    flt['p']['substat_matches'] += 1
 # 7.0 Keep any body, feet, sphere, or rope with hpp, defp, atkp and at dmg/dbf/sup stat >= 2
 for flt in filters[3]['7']['p']['fs']:
     flt['p']['substat_matches'] += 1
