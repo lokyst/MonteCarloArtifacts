@@ -179,7 +179,7 @@ From <https://www.reddit.com/r/GenshinImpactTips/comments/xwbvrb/guide_to_choose
 # ['hp', 'atk', 'def', 'hpp', 'atkp', 'defp', 'be', 'ehr', 'eres', 'cr', 'cd', 'spd',]
 dmg = ['spd', 'cr', 'cd', 'atkp']
 dbf = ['spd', 'ehr', 'be', 'atkp']
-sup = ['spd', 'eres', 'hpp', 'defp']
+sup = ['spd', 'eres']
 # Filters at +0
 filters = {}
 filters.update({0: {
@@ -456,7 +456,7 @@ filters[3]['6']['p']['substat_matches'] += 1
 for flt in filters[3]['7']['p']['fs']:
     flt['p']['substat_matches'] += 1
 # 8.0 Keep any hat or hands with dmg/dbf/sup stat >= 2
-for flt in filters[3]['7']['p']['fs']:
+for flt in filters[3]['8']['p']['fs']:
     flt['p']['substat_matches'] += 1
 
 # Retain filters at +6
@@ -472,11 +472,9 @@ for artifact_filter in filters[9].values():
     if 'fs' in artifact_filter['p']:
         for flt in artifact_filter['p']['fs']:
             flt.update({'f': f.Artifact_Rollcount_Filter})
-            flt['p'].update({'min_roll_count': 5})
         artifact_filter['desc'] = artifact_filter['desc'] + ' and meet min roll count: ' + str(flt['p']['min_roll_count'])
     else:
         artifact_filter.update({'f': f.Artifact_Rollcount_Filter})
-        artifact_filter['p'].update({'min_roll_count': 5})
         artifact_filter['desc'] = artifact_filter['desc'] + ' and meet min roll count: ' + str(artifact_filter['p']['min_roll_count'])
 
 # Exceptions and extensions at +9
@@ -550,7 +548,7 @@ filters_exclude.update({0: {
                             'edmg', 
                             'be',
                             ],
-                        'substats': ['cr', 'cd', 'spd', 'atkp'],
+                        'substats': dmg,
                         'target_level': 9,
                         'min_roll_count': 5,
                     }
@@ -566,7 +564,7 @@ filters_exclude.update({0: {
                             'edmg', 
                             'be',
                             ],
-                        'substats': ['spd', 'atkp', 'ehr', 'be'],
+                        'substats': dbf,
                         'target_level': 9,
                         'min_roll_count': 5,
                     }
@@ -582,7 +580,7 @@ filters_exclude.update({0: {
                             'edmg', 
                             'be',
                             ],
-                        'substats': ['spd', 'eres', 'hpp'],
+                        'substats': sup,
                         'target_level': 9,
                         'min_roll_count': 5,
                     }
