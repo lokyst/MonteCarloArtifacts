@@ -178,8 +178,12 @@ From <https://www.reddit.com/r/GenshinImpactTips/comments/xwbvrb/guide_to_choose
 # Substats
 # ['hp', 'atk', 'def', 'hpp', 'atkp', 'defp', 'be', 'ehr', 'eres', 'cr', 'cd', 'spd',]
 dmg = ['spd', 'cr', 'cd', 'atkp']
-dbf = ['spd', 'ehr', 'atkp']
+dmg_tight = dmg.copy()
+dmg_tight.remove('atkp')
+dbf = ['spd', 'ehr', 'be']
 sup = ['spd', 'eres']
+any = []
+
 # Filters at +0
 ''' 
 TODO: Too many ropes. Too few body & sphere. Slightly too many heads/hands
@@ -202,7 +206,7 @@ filters.update({0: {
                 'edmg', 
                 'be', 'err',
             ],
-            'substats': ['cr', 'cd', 'spd'],
+            'substats': dmg_tight,
             'substat_matches': 2,
             'min_roll_count': 5
         },
@@ -232,7 +236,7 @@ filters.update({0: {
                         'mainstats': ['spd'],
                         'substats': dbf,
                         'substat_matches': 0,
-                        'min_roll_count': 5,
+                        'min_roll_count': 4,
                     },
                 },
                 {
@@ -243,7 +247,7 @@ filters.update({0: {
                         'mainstats': ['spd'],
                         'substats': sup,
                         'substat_matches': 0,
-                        'min_roll_count': 5,
+                        'min_roll_count': 4,
                     },
                 },
             ],
@@ -262,7 +266,7 @@ filters.update({0: {
                         'mainstats': ['err'],
                         'substats': dmg,
                         'substat_matches': 0,
-                        'min_roll_count': 5,
+                        'min_roll_count': 4,
                     },
                 },
                 {
@@ -272,7 +276,7 @@ filters.update({0: {
                         'mainstats': ['err'],
                         'substats': dbf,
                         'substat_matches': 0,
-                        'min_roll_count': 5,
+                        'min_roll_count': 4,
                     },
                 },
                 {
@@ -282,7 +286,7 @@ filters.update({0: {
                         'mainstats': ['err'],
                         'substats': sup,
                         'substat_matches': 0,
-                        'min_roll_count': 5,
+                        'min_roll_count': 4,
                     },
                 },
             ]
@@ -312,7 +316,7 @@ filters.update({0: {
                     'p': {
                         'types': ['body'],
                         'mainstats': ['cr', 'cd'],
-                        'substats': dmg,
+                        'substats': any,
                         'substat_matches': 0,
                         'min_roll_count': 4,
                     },
@@ -325,7 +329,7 @@ filters.update({0: {
                         'mainstats': ['ehr'],
                         'substats': dbf,
                         'substat_matches': 0,
-                        'min_roll_count': 5,
+                        'min_roll_count': 4,
                     },
                 },
                 {
@@ -336,7 +340,7 @@ filters.update({0: {
                         'mainstats': ['ohb'],
                         'substats': sup,
                         'substat_matches': 0,
-                        'min_roll_count': 5,
+                        'min_roll_count': 4,
                     },
                 },
             ],
@@ -365,7 +369,7 @@ filters.update({0: {
                         'mainstats': ['atkp'],
                         'substats': dbf,
                         'substat_matches': 0,
-                        'min_roll_count': 5,
+                        'min_roll_count': 4,
                     },
                 },
             ],
@@ -384,7 +388,7 @@ filters.update({0: {
                         'mainstats': ['edmg'],
                         'substats': dmg,
                         'substat_matches': 0,
-                        'min_roll_count': 4,
+                        'min_roll_count': 5,
                     },
                 },
                 {
@@ -394,7 +398,7 @@ filters.update({0: {
                         'mainstats': ['edmg'],
                         'substats': dbf,
                         'substat_matches': 0,
-                        'min_roll_count': 4,
+                        'min_roll_count': 5,
                     },
                 },
             ]
@@ -411,8 +415,19 @@ filters.update({0: {
                     'f': f.Artifact_Accept_Filter,
                     'p': {
                         'types': ['body', 'feet', 'sphere', 'rope'],
-                        'mainstats': ['hpp', 'defp', 'atkp'],
+                        'mainstats': ['atkp'],
                         'substats': dmg,
+                        'substat_matches': 1,
+                        'min_roll_count': 4,
+                    },
+                },
+                {
+                    'desc': '(dmg)',
+                    'f': f.Artifact_Accept_Filter,
+                    'p': {
+                        'types': ['body', 'feet', 'sphere', 'rope'],
+                        'mainstats': ['hpp', 'defp', 'atkp'],
+                        'substats': dmg_tight,
                         'substat_matches': 1,
                         'min_roll_count': 5,
                     },
@@ -454,7 +469,7 @@ filters.update({0: {
                     'p': {
                         'types': ['head', 'hands'],
                         'mainstats': ['hp', 'atk'],
-                        'substats': dmg,
+                        'substats': dmg_tight,
                         'substat_matches': 1,
                         'min_roll_count': 5,
                     },
